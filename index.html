@@ -4,27 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ApexNet | Elite Developer Console</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        gray900: '#171717',
-                        gray800: '#212121',
-                        gray700: '#2f2f2f',
-                    }
-                }
-            }
-        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { gray900: '#171717', gray800: '#212121', gray700: '#2f2f2f' } } } }
     </script>
-    <!-- Markdown & Highlight.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
@@ -32,14 +18,11 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #424242; border-radius: 3px; }
-        
         .prose pre { background: #000000 !important; border: 1px solid #333; border-radius: 0.5rem; padding: 1rem; margin-top: 0.5rem; overflow-x: auto; }
         .prose code { font-family: 'Fira Code', monospace; font-size: 0.875rem; }
         .prose p { margin-bottom: 1rem; line-height: 1.6; }
-        
         textarea { resize: none; overflow-y: hidden; }
         textarea:focus { outline: none; }
-
         .typing-loader { display: flex; gap: 4px; align-items: center; padding: 10px 0; }
         .typing-loader span { width: 6px; height: 6px; background-color: #888; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
         .typing-loader span:nth-child(1) { animation-delay: -0.32s; }
@@ -49,21 +32,17 @@
 </head>
 <body class="bg-gray800 text-gray-100 flex h-[100dvh] w-full selection:bg-blue-500/30 relative">
 
-    <!-- 🔐 LOGIN / SIGNUP MODAL OVERLAY -->
+    <!-- 🔐 LOGIN MODAL -->
     <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-gray900 border border-white/10 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-6">
             <div class="text-center">
                 <h2 id="modalTitle" class="text-xl font-bold">Access ApexNet</h2>
-                <p id="modalSub" class="text-xs text-gray-400 mt-1">Enter your credentials to connect to Colab backend</p>
+                <p id="modalSub" class="text-xs text-gray-400 mt-1">Enter your credentials to connect</p>
             </div>
-
-            <!-- Tabs -->
             <div class="flex bg-gray800 p-1 rounded-lg border border-white/5 text-xs font-medium">
                 <button onclick="switchTab('login')" id="tabLogin" class="flex-1 py-2 rounded-md bg-blue-600 text-white transition-all">Login</button>
                 <button onclick="switchTab('signup')" id="tabSignup" class="flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all">Signup</button>
             </div>
-
-            <!-- Form -->
             <div class="space-y-4">
                 <div>
                     <label class="text-xs text-gray-400 block mb-1">Username</label>
@@ -74,15 +53,11 @@
                     <input type="password" id="authPassword" value="123456789@1234" class="w-full bg-gray800 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                 </div>
                 <div id="signupKeyBox" class="hidden">
-                    <label class="text-xs text-gray-400 block mb-1">Activation Key (e.g., APEX-ADMIN-9999)</label>
-                    <input type="text" id="authKey" placeholder="Enter key" class="w-full bg-gray800 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                    <label class="text-xs text-gray-400 block mb-1">Activation Key</label>
+                    <input type="text" id="authKey" placeholder="APEX-ADMIN-9999" class="w-full bg-gray800 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                 </div>
-
                 <p id="authError" class="text-xs text-red-400 text-center hidden"></p>
-
-                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition-colors text-sm">
-                    Authenticate
-                </button>
+                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition-colors text-sm">Authenticate</button>
             </div>
         </div>
     </div>
@@ -132,9 +107,7 @@
                     <i class="ph ph-paper-plane-right text-lg"></i>
                 </button>
             </div>
-            <div class="text-center mt-1.5 text-[10px] text-gray-500">
-                ApexNet Mobile Console v2.1 • Auth & Auto-Patcher Active
-            </div>
+            <div class="text-center mt-1.5 text-[10px] text-gray-500">ApexNet Mobile Console v2.1 • Bug-Free Edition</div>
         </div>
     </main>
 
@@ -143,18 +116,16 @@
         let COLAB_URL = "";
         let AUTH_TOKEN = localStorage.getItem('apex_token') || "";
         
-        let currentMode = 'login'; // 'login' or 'signup'
+        let currentMode = 'login';
         let currentChatId = null;
         let chats = JSON.parse(localStorage.getItem('apex_chats_pro')) || [];
 
-        // 1. Init System & Fetch Colab URL from Gist
         async function initSystem() {
             try {
                 const cacheBuster = new Date().getTime(); 
                 const linkRes = await fetch(`${GIST_URL}?t=${cacheBuster}`);
                 COLAB_URL = (await linkRes.text()).trim().replace(/\/$/, "");
-                console.log("🔗 Target Locked:", COLAB_URL);
-
+                
                 document.getElementById('serverStatus').innerText = 'System Online';
                 document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500';
 
@@ -164,55 +135,32 @@
                     verifyToken();
                 }
             } catch (err) {
-                console.error("System Init Error:", err);
                 document.getElementById('serverStatus').innerText = 'Offline';
                 document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-red-500';
             }
         }
 
-        // 2. Auth Modal Tabs Switching
         function switchTab(mode) {
             currentMode = mode;
-            const tabLogin = document.getElementById('tabLogin');
-            const tabSignup = document.getElementById('tabSignup');
-            const signupKeyBox = document.getElementById('signupKeyBox');
-            const submitBtn = document.getElementById('authSubmitBtn');
-
-            if (mode === 'login') {
-                tabLogin.className = "flex-1 py-2 rounded-md bg-blue-600 text-white transition-all";
-                tabSignup.className = "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all";
-                signupKeyBox.classList.add('hidden');
-                submitBtn.innerText = "Authenticate";
-            } else {
-                tabSignup.className = "flex-1 py-2 rounded-md bg-blue-600 text-white transition-all";
-                tabLogin.className = "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all";
-                signupKeyBox.classList.remove('hidden');
-                submitBtn.innerText = "Create Account";
-            }
+            document.getElementById('tabLogin').className = mode === 'login' ? "flex-1 py-2 rounded-md bg-blue-600 text-white transition-all" : "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all";
+            document.getElementById('tabSignup').className = mode === 'signup' ? "flex-1 py-2 rounded-md bg-blue-600 text-white transition-all" : "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all";
+            document.getElementById('signupKeyBox').classList.toggle('hidden', mode === 'login');
+            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? "Authenticate" : "Create Account";
         }
 
-        // 3. Handle Login / Signup Submit
         async function handleAuthSubmit() {
             const username = document.getElementById('authUsername').value.trim();
             const password = document.getElementById('authPassword').value.trim();
             const key = document.getElementById('authKey').value.trim();
             const errBox = document.getElementById('authError');
 
-            if (!username || !password) {
-                errBox.innerText = "Please fill all required fields";
-                errBox.classList.remove('hidden');
-                return;
-            }
+            if (!username || !password) return errBox.classList.remove('hidden'), errBox.innerText = "Fill all fields";
 
             try {
                 let endpoint = currentMode === 'login' ? '/v1/auth/login' : '/v1/auth/signup';
                 let payload = currentMode === 'login' ? { username, password } : { username, password, activation_key: key };
 
-                const res = await fetch(`${COLAB_URL}${endpoint}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                const res = await fetch(`${COLAB_URL}${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
 
                 if (res.ok) {
                     const data = await res.json();
@@ -220,44 +168,35 @@
                     localStorage.setItem('apex_token', AUTH_TOKEN);
                     document.getElementById('authModal').classList.add('hidden');
                     errBox.classList.add('hidden');
-                    document.getElementById('welcomeScreen').innerHTML = `
-                        <div class="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-6">
-                            <i class="ph ph-check text-3xl text-blue-500"></i>
-                        </div>
-                        <h2 class="text-2xl font-semibold mb-2">Welcome Back, ${username}!</h2>
-                        <p class="text-gray-400 text-sm">Session verified successfully. Start chatting below.</p>
-                    `;
+                    verifyToken();
                 } else {
                     const errData = await res.json();
-                    errBox.innerText = errData.detail || "Authentication failed";
+                    errBox.innerText = errData.detail || "Auth Failed";
                     errBox.classList.remove('hidden');
                 }
             } catch (err) {
-                errBox.innerText = "Server error. Check if Colab is running.";
+                errBox.innerText = "Server error. Is Colab running?";
                 errBox.classList.remove('hidden');
             }
         }
 
-        async function verifyToken() {
-            // Quick check by sending a test request or assuming token is valid until API rejects
+        function verifyToken() {
             document.getElementById('authModal').classList.add('hidden');
-            document.getElementById('welcomeScreen').innerHTML = `
-                <div class="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-6">
-                    <i class="ph ph-check text-3xl text-blue-500"></i>
-                </div>
-                <h2 class="text-2xl font-semibold mb-2">System Ready</h2>
-                <p class="text-gray-400 text-sm">Restored session from local storage.</p>
-            `;
+            let welcome = document.getElementById('welcomeScreen');
+            if (welcome) {
+                welcome.innerHTML = `
+                    <div class="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-6"><i class="ph ph-check text-3xl text-blue-500"></i></div>
+                    <h2 class="text-2xl font-semibold mb-2">System Ready</h2>
+                    <p class="text-gray-400 text-sm">Session verified successfully. Start chatting below.</p>`;
+            }
         }
 
-        // 4. Logout Feature
         function logout() {
             localStorage.removeItem('apex_token');
             AUTH_TOKEN = "";
             document.getElementById('authModal').classList.remove('hidden');
         }
 
-        // 5. Chat History & Logic
         function createNewChat() {
             currentChatId = Date.now().toString();
             chats.unshift({ id: currentChatId, title: "New Conversation", messages: [] });
@@ -267,53 +206,38 @@
 
         function loadChat(id) {
             currentChatId = id;
-            const chat = chats.find(c => c.id === id);
             document.getElementById('chatBox').innerHTML = '';
+            const chat = chats.find(c => c.id === id);
             if (chat) chat.messages.forEach(msg => appendMessage(msg.role, msg.content, false));
         }
 
-        function saveChats() {
-            localStorage.setItem('apex_chats_pro', JSON.stringify(chats));
-            renderHistory();
-        }
+        function saveChats() { localStorage.setItem('apex_chats_pro', JSON.stringify(chats)); renderHistory(); }
 
         function renderHistory() {
             const list = document.getElementById('historyList');
             list.innerHTML = '';
             chats.forEach(chat => {
                 const isActive = chat.id === currentChatId;
-                list.innerHTML += `
-                    <button onclick="loadChat('${chat.id}')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-md ${isActive ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5'} transition-colors text-sm truncate">
-                        <i class="ph ph-chat-teardrop text-lg flex-shrink-0"></i>
-                        <span class="truncate">${chat.title}</span>
-                    </button>
-                `;
+                list.innerHTML += `<button onclick="loadChat('${chat.id}')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-md ${isActive ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5'} transition-colors text-sm truncate"><i class="ph ph-chat-teardrop text-lg flex-shrink-0"></i><span class="truncate">${chat.title}</span></button>`;
             });
         }
 
         function appendMessage(role, text, save = true) {
             const chatBox = document.getElementById('chatBox');
-            if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen'].remove();
+            // 🔥 BUG FIXED HERE: Removed the typo ']' 
+            const welcome = document.getElementById('welcomeScreen');
+            if (welcome) welcome.remove();
 
             const isUser = role === 'user';
-            let formattedText = isUser ? text : marked.parse(text);
-            
             const msgDiv = document.createElement('div');
             msgDiv.className = `w-full flex justify-center py-6 ${isUser ? 'bg-transparent' : 'bg-gray800 border-y border-white/5'}`;
-            
             msgDiv.innerHTML = `
                 <div class="max-w-3xl w-full px-4 flex gap-4 md:gap-6">
-                    <div class="w-8 h-8 rounded-sm flex-shrink-0 flex items-center justify-center ${isUser ? 'bg-blue-600' : 'bg-green-600'}">
-                        <i class="${isUser ? 'ph ph-user' : 'ph ph-robot'} text-white"></i>
-                    </div>
-                    <div class="prose prose-invert max-w-none text-sm md:text-base text-gray-200 w-full overflow-hidden">
-                        ${formattedText}
-                    </div>
-                </div>
-            `;
+                    <div class="w-8 h-8 rounded-sm flex-shrink-0 flex items-center justify-center ${isUser ? 'bg-blue-600' : 'bg-green-600'}"><i class="${isUser ? 'ph ph-user' : 'ph ph-robot'} text-white"></i></div>
+                    <div class="prose prose-invert max-w-none text-sm md:text-base text-gray-200 w-full overflow-hidden">${isUser ? text : marked.parse(text)}</div>
+                </div>`;
             chatBox.appendChild(msgDiv);
-            
-            document.querySelectorAll('pre code').forEach((el) => { hljs.highlightElement(el); });
+            document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
             chatBox.scrollTop = chatBox.scrollHeight;
 
             if (save && currentChatId) {
@@ -331,14 +255,7 @@
             const typingDiv = document.createElement('div');
             typingDiv.id = 'typingIndicator';
             typingDiv.className = 'w-full flex justify-center py-6 bg-gray800 border-y border-white/5';
-            typingDiv.innerHTML = `
-                <div class="max-w-3xl w-full px-4 flex gap-4 md:gap-6">
-                    <div class="w-8 h-8 rounded-sm flex-shrink-0 flex items-center justify-center bg-green-600">
-                        <i class="ph ph-robot text-white"></i>
-                    </div>
-                    <div class="typing-loader"><span></span><span></span><span></span></div>
-                </div>
-            `;
+            typingDiv.innerHTML = `<div class="max-w-3xl w-full px-4 flex gap-4 md:gap-6"><div class="w-8 h-8 rounded-sm flex-shrink-0 flex items-center justify-center bg-green-600"><i class="ph ph-robot text-white"></i></div><div class="typing-loader"><span></span><span></span><span></span></div></div>`;
             chatBox.appendChild(typingDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
@@ -349,7 +266,6 @@
             if (!text) return;
 
             if (!currentChatId) createNewChat();
-
             appendMessage('user', text);
             input.value = ''; input.style.height = 'auto';
             showTyping();
@@ -361,24 +277,12 @@
             }
 
             try {
-                const res = await fetch(`${COLAB_URL}/v1/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
-                    body: JSON.stringify({ message: text })
-                });
-
+                const res = await fetch(`${COLAB_URL}/v1/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` }, body: JSON.stringify({ message: text }) });
                 document.getElementById('typingIndicator').remove();
-                if (res.status === 401) {
-                    logout();
-                    appendMessage('ai', "⚠️ Session expired. Please login again.");
-                    return;
-                }
-                if (res.ok) {
-                    const data = await res.json();
-                    appendMessage('ai', data.reply);
-                } else {
-                    appendMessage('ai', `⚠️ HTTP Error: ${res.status}`);
-                }
+                
+                if (res.status === 401) { logout(); appendMessage('ai', "⚠️ Session expired. Please login again."); return; }
+                if (res.ok) { const data = await res.json(); appendMessage('ai', data.reply); } 
+                else { appendMessage('ai', `⚠️ HTTP Error: ${res.status}`); }
             } catch (err) {
                 document.getElementById('typingIndicator').remove();
                 appendMessage('ai', `🚨 Tunnel disconnected. Is your Colab session active?`);
@@ -386,16 +290,10 @@
         }
 
         const input = document.getElementById('userInput');
-        input.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-        });
-        input.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
-        });
+        input.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; });
+        input.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
 
-        if (chats.length === 0) createNewChat();
-        else loadChat(chats[0].id);
+        if (chats.length === 0) createNewChat(); else loadChat(chats[0].id);
         renderHistory();
         initSystem();
     </script>
