@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
     
-    <!-- PrismJS (Dark Theme) -->
+    <!-- PrismJS (Dark Theme Locked) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
@@ -18,8 +18,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
     
-    <!-- Marked.js & DOMPurify -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- HACKER FIX: Marked.js version locked to 4.3.0 to prevent JS Crash -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    
+    <!-- DOMPurify (XSS Security Locked) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 
     <!-- MathJax 3 -->
@@ -61,7 +63,6 @@
         </div>
         <div class="flex-1 overflow-y-auto p-3 space-y-2" id="historyList">
             <p class="text-xs text-gray-500 font-mono text-center mt-4">Session memory active.</p>
-            <!-- Chat history items will appear here -->
         </div>
         <div class="p-4 border-t border-gray-800">
             <button onclick="logout()" class="w-full text-xs font-mono text-red-400 hover:text-red-300 bg-red-950/30 py-2 rounded-lg border border-red-900/50 transition">
@@ -70,13 +71,11 @@
         </div>
     </aside>
 
-    <!-- Overlay for Mobile Sidebar -->
     <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden backdrop-blur-sm"></div>
 
     <!-- MAIN CONTENT AREA -->
     <div class="flex-1 flex flex-col relative w-full">
         
-        <!-- HEADER -->
         <header class="glass-panel border-b border-gray-800 p-3 px-4 flex justify-between items-center z-10 absolute top-0 w-full">
             <div class="flex items-center space-x-3">
                 <button onclick="toggleSidebar()" id="menuBtn" class="md:hidden text-gray-400 hover:text-white hidden">
@@ -89,7 +88,6 @@
                 <span id="userBadge" class="hidden sm:inline-block text-[10px] bg-blue-900/30 text-blue-400 px-2 py-0.5 rounded border border-blue-800/50 font-mono uppercase tracking-widest"></span>
             </div>
 
-            <!-- Server Setup -->
             <div class="flex items-center space-x-2">
                 <input type="text" id="serverUrl" placeholder="https://...trycloudflare.com" 
                     class="bg-gray-900/50 text-gray-300 text-xs px-3 py-1.5 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-500 w-32 sm:w-56 font-mono placeholder-gray-600">
@@ -124,7 +122,6 @@
         <!-- CHAT VIEW -->
         <main id="chatBox" class="hidden flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 pt-20 pb-28 max-w-4xl w-full mx-auto"></main>
 
-        <!-- INPUT FOOTER -->
         <footer id="chatFooter" class="hidden absolute bottom-0 w-full glass-panel border-t border-gray-800 p-3 sm:p-4 pb-4 sm:pb-6 z-10">
             <div class="flex max-w-4xl mx-auto space-x-2 sm:space-x-3 items-end relative">
                 <textarea id="userInput" rows="1" placeholder="Send a message or code..." 
@@ -138,12 +135,11 @@
     </div>
 
     <script>
-        // --- CUSTOM MARKED.JS RENDERER (Adds Copy Code Button) ---
+        // --- SAFE MARKED.JS RENDERER ---
         const renderer = new marked.Renderer();
         renderer.code = function(code, language) {
             const lang = language || 'text';
             const uniqueId = 'code-' + Math.random().toString(36).substr(2, 9);
-            // Escape HTML for safe rendering inside code block
             const escapedCode = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             
             return `
@@ -158,9 +154,10 @@
                 <pre class="p-4 m-0 overflow-x-auto text-sm font-mono"><code id="${uniqueId}" class="language-${lang}">${escapedCode}</code></pre>
             </div>`;
         };
+        
+        // This is safe on Marked v4.3.0
         marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
 
-        // --- COPY TO CLIPBOARD LOGIC ---
         window.copyToClipboard = function(elementId, btnElement) {
             const codeText = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(codeText).then(() => {
@@ -173,6 +170,7 @@
         let currentMode = 'login'; 
 
         window.onload = () => {
+            console.log("ApexNet V2 Engine Started...");
             const savedUrl = localStorage.getItem('apex_server_url');
             if (savedUrl) document.getElementById('serverUrl').value = savedUrl;
             const token = localStorage.getItem('apex_token');
@@ -187,7 +185,6 @@
             return url;
         }
 
-        // --- SIDEBAR TOGGLE ---
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -251,14 +248,14 @@
 
         function logout() {
             localStorage.removeItem('apex_token');
-            location.reload(); // Clean UI wipe
+            location.reload(); 
         }
 
         function clearChat() {
             if(confirm("Start a new session? This clears the UI (backend memory remains).")) {
                 localStorage.removeItem('apex_chat_history');
                 document.getElementById('chatBox').innerHTML = '';
-                toggleSidebar(); // Close sidebar on mobile
+                toggleSidebar(); 
             }
         }
 
@@ -345,7 +342,6 @@
             
             chatBox.appendChild(div);
             
-            // Smooth scroll to bottom
             setTimeout(() => {
                 chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
             }, 50);
