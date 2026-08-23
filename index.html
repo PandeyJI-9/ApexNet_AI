@@ -3,378 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexNet | Advanced Terminal</title>
-    
+    <title>ApexNet 7.6B | Elite AI</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: 'class' }</script>
-    
-    <!-- PrismJS (Dark Theme Locked) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    
-    <!-- HACKER FIX: Marked.js version locked to 4.3.0 to prevent JS Crash -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
-    
-    <!-- DOMPurify (XSS Security Locked) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
-
-    <!-- MathJax 3 -->
     <script>
-        window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
-            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
-        };
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        glass: "rgba(17, 25, 40, 0.75)",
+                        glassBorder: "rgba(255, 255, 255, 0.125)",
+                    }
+                }
+            }
+        }
     </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Markdown & Syntax Highlighting -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        ::-webkit-scrollbar { width: 4px; }
+        /* Premium Glassmorphism & Animations */
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            margin: 0; height: 100vh; overflow: hidden;
+        }
+        .glass-panel {
+            background: var(--tw-colors-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--tw-colors-glassBorder);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
-        pre[class*="language-"] { margin: 0; border-radius: 0 0 0.75rem 0.75rem; background: #0f1115 !important; }
-        .glass-panel { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+        
+        .chat-container { height: calc(100vh - 140px); overflow-y: auto; scroll-behavior: smooth; }
+        .message-ai { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0 1rem 1rem 1rem; }
+        .message-user { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 1rem 0 1rem 1rem; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
+        
+        /* Code Block Styling */
+        pre { background: #1a1a2e !important; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; border: 1px solid rgba(255,255,255,0.1); margin-top: 0.5rem;}
+        code { font-family: 'Fira Code', monospace; }
+        
+        /* Typing indicator animation */
+        .dot { animation: blink 1.4s infinite both; height: 8px; width: 8px; background: #fff; border-radius: 50%; display: inline-block; margin: 0 2px; }
+        .dot:nth-child(1) { animation-delay: 0.2s; }
+        .dot:nth-child(2) { animation-delay: 0.4s; }
+        .dot:nth-child(3) { animation-delay: 0.6s; }
+        @keyframes blink { 0% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0.2; } }
     </style>
 </head>
-<body class="bg-[#0b0f19] text-gray-100 h-screen flex font-sans select-none sm:select-auto overflow-hidden">
+<body class="flex">
 
-    <!-- SIDEBAR (Chat History) -->
-    <aside id="sidebar" class="w-64 bg-gray-900 border-r border-gray-800 flex-col transition-transform duration-300 absolute md:relative z-40 h-full -translate-x-full md:translate-x-0 flex shadow-2xl">
-        <div class="p-4 border-b border-gray-800 flex justify-between items-center">
-            <h2 class="font-bold text-gray-200 tracking-wider text-sm flex items-center gap-2">
-                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002 2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                ApexNet Vault
-            </h2>
-            <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+    <!-- Sidebar (History) -->
+    <aside class="glass-panel w-72 h-full flex flex-col hidden md:flex border-r transition-all duration-300 z-20">
+        <div class="p-4 border-b border-white/10 flex justify-between items-center">
+            <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">ApexNet 7.6B</h1>
+            <button onclick="createNewChat()" class="text-gray-400 hover:text-white"><i class="fas fa-plus"></i></button>
         </div>
-        <div class="p-3">
-            <button onclick="clearChat()" class="w-full flex items-center justify-center gap-2 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-900/50 py-2.5 rounded-xl text-sm font-bold transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                New Session
-            </button>
+        <div class="p-3 text-sm text-gray-400 uppercase tracking-wider font-semibold">Chat History</div>
+        <div id="historyList" class="flex-1 overflow-y-auto p-2 space-y-2">
+            <!-- Dynamic History injected here -->
         </div>
-        <div class="flex-1 overflow-y-auto p-3 space-y-2" id="historyList">
-            <p class="text-xs text-gray-500 font-mono text-center mt-4">Session memory active.</p>
-        </div>
-        <div class="p-4 border-t border-gray-800">
-            <button onclick="logout()" class="w-full text-xs font-mono text-red-400 hover:text-red-300 bg-red-950/30 py-2 rounded-lg border border-red-900/50 transition">
-                [x] Disconnect
-            </button>
+        <div class="p-4 border-t border-white/10 text-xs text-gray-500 flex items-center justify-between">
+            <span>Server Status:</span>
+            <span id="serverStatus" class="text-yellow-400 flex items-center gap-1"><i class="fas fa-circle text-[8px]"></i> Fetching...</span>
         </div>
     </aside>
 
-    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden backdrop-blur-sm"></div>
-
-    <!-- MAIN CONTENT AREA -->
-    <div class="flex-1 flex flex-col relative w-full">
-        
-        <header class="glass-panel border-b border-gray-800 p-3 px-4 flex justify-between items-center z-10 absolute top-0 w-full">
-            <div class="flex items-center space-x-3">
-                <button onclick="toggleSidebar()" id="menuBtn" class="md:hidden text-gray-400 hover:text-white hidden">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-                <div class="flex items-center space-x-2">
-                    <div class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-                    <h1 class="text-base font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ApexNet</h1>
-                </div>
-                <span id="userBadge" class="hidden sm:inline-block text-[10px] bg-blue-900/30 text-blue-400 px-2 py-0.5 rounded border border-blue-800/50 font-mono uppercase tracking-widest"></span>
-            </div>
-
-            <div class="flex items-center space-x-2">
-                <input type="text" id="serverUrl" placeholder="https://...trycloudflare.com" 
-                    class="bg-gray-900/50 text-gray-300 text-xs px-3 py-1.5 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-500 w-32 sm:w-56 font-mono placeholder-gray-600">
-                <button onclick="testConnection()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-lg text-xs font-mono border border-gray-600 transition">Ping</button>
-            </div>
+    <!-- Main Chat Area -->
+    <main class="flex-1 flex flex-col h-full relative">
+        <!-- Mobile Header -->
+        <header class="md:hidden glass-panel p-4 flex justify-between items-center border-b z-10">
+            <h1 class="text-lg font-bold">ApexNet</h1>
+            <button onclick="document.querySelector('aside').classList.toggle('hidden')" class="text-white"><i class="fas fa-bars"></i></button>
         </header>
 
-        <!-- AUTH VIEW -->
-        <div id="authContainer" class="flex-1 flex items-center justify-center p-4 bg-[#0b0f19] mt-14">
-            <div class="glass-panel border border-gray-800 p-8 rounded-2xl w-full max-w-sm shadow-2xl space-y-6 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-                <div class="text-center space-y-1">
-                    <h2 class="text-2xl font-black text-white tracking-wide">Sys_Login</h2>
-                    <p class="text-xs text-gray-400 font-mono">Authenticate to access Neural Net</p>
-                </div>
-                <div class="flex bg-gray-900 p-1 rounded-xl border border-gray-800">
-                    <button onclick="switchTab('login')" id="tabLogin" class="flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition shadow">Login</button>
-                    <button onclick="switchTab('signup')" id="tabSignup" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-white transition">Sign Up</button>
-                </div>
-                <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
-                    <input type="text" id="username" required placeholder="Username" class="w-full bg-gray-900 text-white text-sm px-4 py-3 rounded-xl border border-gray-700 focus:outline-none focus:border-blue-500 font-mono">
-                    <input type="password" id="password" required placeholder="Password" class="w-full bg-gray-900 text-white text-sm px-4 py-3 rounded-xl border border-gray-700 focus:outline-none focus:border-blue-500 font-mono">
-                    <input type="text" id="activationKey" placeholder="Activation Key" class="hidden w-full bg-gray-900 text-green-400 text-sm px-4 py-3 rounded-xl border border-gray-700 focus:outline-none focus:border-blue-500 font-mono uppercase">
-                    <div id="authError" class="text-xs text-red-400 font-mono text-center hidden"></div>
-                    <button type="submit" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition shadow-[0_0_15px_rgba(37,99,235,0.3)] text-sm">
-                        Initialize
-                    </button>
-                </form>
+        <!-- Chat Output -->
+        <div id="chatBox" class="chat-container p-4 md:p-8 flex flex-col gap-6 w-full max-w-4xl mx-auto">
+            <div class="text-center text-gray-500 mt-10">
+                <i class="fas fa-robot text-4xl mb-3 text-blue-500 opacity-50"></i>
+                <h2 class="text-xl font-semibold text-gray-300">Welcome to ApexNet Elite</h2>
+                <p class="text-sm mt-2">Server auto-patching in background...</p>
             </div>
         </div>
 
-        <!-- CHAT VIEW -->
-        <main id="chatBox" class="hidden flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 pt-20 pb-28 max-w-4xl w-full mx-auto"></main>
-
-        <footer id="chatFooter" class="hidden absolute bottom-0 w-full glass-panel border-t border-gray-800 p-3 sm:p-4 pb-4 sm:pb-6 z-10">
-            <div class="flex max-w-4xl mx-auto space-x-2 sm:space-x-3 items-end relative">
-                <textarea id="userInput" rows="1" placeholder="Send a message or code..." 
-                    class="flex-1 bg-gray-900 text-white p-3.5 px-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none font-mono text-sm max-h-32 border border-gray-700 shadow-inner leading-relaxed"
-                    oninput="autoResize(this)"></textarea>
-                <button onclick="sendMessage()" id="sendBtn" class="bg-blue-600 hover:bg-blue-500 p-3.5 rounded-xl transition shadow-[0_0_15px_rgba(37,99,235,0.4)] flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+        <!-- Input Area -->
+        <div class="p-4 w-full max-w-4xl mx-auto absolute bottom-0 left-0 right-0">
+            <div class="glass-panel p-2 rounded-2xl flex items-end gap-2 shadow-2xl">
+                <textarea id="userInput" rows="1" class="w-full bg-transparent text-white p-3 focus:outline-none resize-none max-h-32" placeholder="Send a message to ApexNet..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                <button id="sendBtn" onclick="handleSend()" class="bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-xl transition-all duration-200 mb-1">
+                    <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
-        </footer>
-    </div>
+        </div>
+    </main>
 
     <script>
-        // --- SAFE MARKED.JS RENDERER ---
-        const renderer = new marked.Renderer();
-        renderer.code = function(code, language) {
-            const lang = language || 'text';
-            const uniqueId = 'code-' + Math.random().toString(36).substr(2, 9);
-            const escapedCode = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            
-            return `
-            <div class="my-4 rounded-xl overflow-hidden border border-gray-700 bg-gray-900 shadow-lg">
-                <div class="flex justify-between items-center px-4 py-2 bg-[#1f2937] border-b border-gray-700">
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${lang}</span>
-                    <button onclick="copyToClipboard('${uniqueId}', this)" class="text-[10px] font-bold text-gray-400 hover:text-white flex items-center gap-1.5 transition uppercase tracking-wider bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded border border-gray-600">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        <span>Copy</span>
-                    </button>
-                </div>
-                <pre class="p-4 m-0 overflow-x-auto text-sm font-mono"><code id="${uniqueId}" class="language-${lang}">${escapedCode}</code></pre>
-            </div>`;
-        };
+        // --- 1. CORE SYSTEM VARIABLES ---
+        const KVDB_URL = "https://kvdb.io/J1ibE3hFShkohLKyCTRmbT/colab_link";
+        let COLAB_URL = "";
+        let AUTH_TOKEN = "";
+        const USERNAME = "Ayushpandey_Boss";
+        const PASSWORD = "123456789@1234";
         
-        // This is safe on Marked v4.3.0
-        marked.setOptions({ renderer: renderer, breaks: true, gfm: true });
+        let currentChatId = null;
+        let chats = JSON.parse(localStorage.getItem('apex_chats')) || [];
 
-        window.copyToClipboard = function(elementId, btnElement) {
-            const codeText = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(codeText).then(() => {
-                const originalText = btnElement.innerHTML;
-                btnElement.innerHTML = `<svg class="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-green-400">Copied!</span>`;
-                setTimeout(() => { btnElement.innerHTML = originalText; }, 2000);
-            });
-        };
-
-        let currentMode = 'login'; 
-
-        window.onload = () => {
-            console.log("ApexNet V2 Engine Started...");
-            const savedUrl = localStorage.getItem('apex_server_url');
-            if (savedUrl) document.getElementById('serverUrl').value = savedUrl;
-            const token = localStorage.getItem('apex_token');
-            const username = localStorage.getItem('apex_username');
-            if (token && username) showChatInterface(username);
-        };
-
-        function saveServerUrl(url) { localStorage.setItem('apex_server_url', url.trim().replace(/\/$/, "")); }
-        function getServerUrl() {
-            let url = document.getElementById('serverUrl').value.trim().replace(/\/$/, "");
-            if (!url) throw new Error("URL missing");
-            return url;
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-
-        function switchTab(mode) {
-            currentMode = mode;
-            document.getElementById('tabLogin').className = mode === 'login' ? "flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition shadow" : "flex-1 py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-white transition";
-            document.getElementById('tabSignup').className = mode === 'signup' ? "flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition shadow" : "flex-1 py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-white transition";
-            document.getElementById('activationKey').classList.toggle('hidden', mode === 'login');
-            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? "Login" : "Register Key";
-            document.getElementById('authError').classList.add('hidden');
-        }
-
-        async function handleAuth(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const key = document.getElementById('activationKey').value.trim();
-            const errDiv = document.getElementById('authError');
-            const submitBtn = document.getElementById('authSubmitBtn');
-
-            errDiv.classList.add('hidden');
-            submitBtn.disabled = true; submitBtn.innerText = "Connecting...";
-
+        // --- 2. AUTO-PATCHER & LOGIN SYSTEM ---
+        async function initSystem() {
             try {
-                const endpoint = currentMode === 'login' ? `${getServerUrl()}/v1/auth/login` : `${getServerUrl()}/v1/auth/signup`;
-                const payload = currentMode === 'login' ? { username, password } : { username, password, activation_key: key };
+                // Fetch dynamic URL
+                document.getElementById('serverStatus').innerHTML = '<i class="fas fa-circle text-[8px]"></i> Patching...';
+                const linkRes = await fetch(KVDB_URL);
+                COLAB_URL = (await linkRes.text()).trim().replace(/\/$/, "");
+                console.log("🔗 Live URL:", COLAB_URL);
 
-                const response = await fetch(endpoint, {
+                // Auto Login
+                const loginRes = await fetch(`${COLAB_URL}/v1/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ username: USERNAME, password: PASSWORD })
                 });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.detail || "Authentication failed");
 
-                localStorage.setItem('apex_token', data.token);
-                localStorage.setItem('apex_username', username);
-                showChatInterface(username);
+                if (loginRes.ok) {
+                    const data = await loginRes.json();
+                    AUTH_TOKEN = data.token;
+                    document.getElementById('serverStatus').innerHTML = '<i class="fas fa-circle text-[8px] text-green-400"></i> Online';
+                    document.getElementById('serverStatus').className = "text-green-400 flex items-center gap-1";
+                } else {
+                    document.getElementById('serverStatus').innerHTML = '<i class="fas fa-circle text-[8px] text-red-500"></i> Auth Failed';
+                }
             } catch (err) {
-                errDiv.innerText = `❌ ${err.message}`;
-                errDiv.classList.remove('hidden');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = currentMode === 'login' ? "Login" : "Register Key";
+                console.error("System Init Error:", err);
+                document.getElementById('serverStatus').innerHTML = '<i class="fas fa-circle text-[8px] text-red-500"></i> Offline';
             }
         }
 
-        function showChatInterface(username) {
-            document.getElementById('authContainer').classList.add('hidden');
-            document.getElementById('chatBox').classList.remove('hidden');
-            document.getElementById('chatFooter').classList.remove('hidden');
-            document.getElementById('menuBtn').classList.remove('hidden');
-            document.getElementById('userBadge').innerText = username;
-            document.getElementById('userBadge').classList.remove('hidden');
-            loadLocalChatHistory();
+        // --- 3. CHAT HISTORY (Bug Fixed!) ---
+        function saveChats() {
+            localStorage.setItem('apex_chats', JSON.stringify(chats));
+            renderHistory();
         }
 
-        function logout() {
-            localStorage.removeItem('apex_token');
-            location.reload(); 
+        function createNewChat() {
+            currentChatId = Date.now().toString();
+            chats.unshift({ id: currentChatId, title: "New Chat", messages: [] });
+            saveChats();
+            document.getElementById('chatBox').innerHTML = ''; // Clear UI
         }
 
-        function clearChat() {
-            if(confirm("Start a new session? This clears the UI (backend memory remains).")) {
-                localStorage.removeItem('apex_chat_history');
-                document.getElementById('chatBox').innerHTML = '';
-                toggleSidebar(); 
+        function loadChat(id) {
+            currentChatId = id;
+            const chat = chats.find(c => c.id === id);
+            document.getElementById('chatBox').innerHTML = '';
+            if (chat) {
+                chat.messages.forEach(msg => appendMessage(msg.role, msg.content, false));
             }
         }
 
-        async function testConnection() {
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+            chats.forEach(chat => {
+                list.innerHTML += `
+                    <div onclick="loadChat('${chat.id}')" class="p-3 rounded-lg cursor-pointer transition-all hover:bg-white/10 ${chat.id === currentChatId ? 'bg-white/10 border-l-2 border-blue-500' : ''}">
+                        <div class="truncate text-sm text-gray-200"><i class="far fa-comment-alt mr-2 text-gray-500"></i> ${chat.title}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- 4. MESSAGE RENDERING ---
+        function appendMessage(role, text, save = true) {
+            const chatBox = document.getElementById('chatBox');
+            // Remove welcome screen if present
+            if (chatBox.innerHTML.includes('Welcome to ApexNet')) chatBox.innerHTML = '';
+
+            const isUser = role === 'user';
+            
+            // Format AI response with Markdown and Syntax Highlighting
+            let formattedText = isUser ? text : marked.parse(text);
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex w-full ${isUser ? 'justify-end' : 'justify-start'}`;
+            msgDiv.innerHTML = `
+                <div class="max-w-[85%] p-4 ${isUser ? 'message-user text-white' : 'message-ai text-gray-200'}">
+                    <div class="prose prose-invert max-w-none text-sm md:text-base leading-relaxed">
+                        ${formattedText}
+                    </div>
+                </div>
+            `;
+            chatBox.appendChild(msgDiv);
+            
+            // Apply syntax highlighting to new code blocks
+            document.querySelectorAll('pre code').forEach((el) => { hljs.highlightElement(el); });
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Save to history
+            if (save && currentChatId) {
+                const chat = chats.find(c => c.id === currentChatId);
+                if (chat) {
+                    if (chat.messages.length === 0 && isUser) {
+                        chat.title = text.substring(0, 25) + "..."; // Auto title
+                    }
+                    chat.messages.push({ role, content: text });
+                    saveChats();
+                }
+            }
+        }
+
+        function showTyping() {
+            const chatBox = document.getElementById('chatBox');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'flex w-full justify-start';
+            typingDiv.innerHTML = `
+                <div class="max-w-[85%] p-4 message-ai text-gray-200">
+                    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                </div>
+            `;
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function hideTyping() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+
+        // --- 5. NETWORK COMMUNICATION ---
+        async function handleSend() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            if (!currentChatId) createNewChat();
+
+            appendMessage('user', text);
+            input.value = '';
+            input.style.height = 'auto'; // Reset textarea height
+            showTyping();
+
+            if (!AUTH_TOKEN) {
+                hideTyping();
+                appendMessage('ai', "⚠️ Error: Backend se connect nahi ho paya. Refresh karo ya Colab check karo.");
+                return;
+            }
+
             try {
-                const res = await fetch(`${getServerUrl()}/ping`);
-                if (res.ok) alert("🟢 Connection Successful!");
-                else alert("⚠️ Server error.");
-            } catch (e) { alert("❌ Connection Failed."); }
+                const res = await fetch(`${COLAB_URL}/v1/chat`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${AUTH_TOKEN}`
+                    },
+                    body: JSON.stringify({ message: text })
+                });
+
+                hideTyping();
+                if (res.ok) {
+                    const data = await res.json();
+                    appendMessage('ai', data.reply);
+                } else {
+                    appendMessage('ai', `⚠️ Server Error: ${res.status}`);
+                }
+            } catch (err) {
+                hideTyping();
+                appendMessage('ai', `🚨 Network Crash! Cloudflare link block ho gaya ya Colab band hai.\n\nError: ${err.message}`);
+            }
         }
 
-        function autoResize(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-        }
-
-        document.getElementById('userInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        // Handle Enter key (Shift+Enter for new line)
+        document.getElementById('userInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
         });
 
-        async function sendMessage() {
-            const input = document.getElementById('userInput');
-            const msg = input.value.trim();
-            if (!msg) return;
+        // --- 6. BOOT SEQUENCE ---
+        if (chats.length === 0) createNewChat();
+        else loadChat(chats[0].id);
+        renderHistory();
+        
+        // Start booting
+        initSystem();
 
-            const token = localStorage.getItem('apex_token');
-            if (!token) { logout(); return; }
-
-            appendMessage("User", msg, "bg-blue-600 border border-blue-500 text-white self-end ml-auto rounded-tr-none shadow-[0_0_15px_rgba(37,99,235,0.2)]");
-            input.value = ""; input.style.height = 'auto';
-
-            const isResearch = ["aaj", "current", "date", "tarik", "news", "2026", "latest"].some(k => msg.toLowerCase().includes(k));
-            const loadingText = isResearch ? "🌐 DuckDuckGo Search Active..." : "Processing...";
-            const loadingClass = isResearch ? "text-blue-400 border-blue-900/50" : "text-green-400 border-green-900/50";
-            
-            const loadingId = appendMessage("ApexNet", loadingText, `bg-gray-900 border self-start mr-auto rounded-tl-none animate-pulse font-mono text-xs ${loadingClass}`);
-
-            try {
-                const response = await fetch(`${getServerUrl()}/v1/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ message: msg })
-                });
-
-                if (response.status === 401) { alert("Session expired."); logout(); return; }
-
-                const data = await response.json();
-                document.getElementById(loadingId).remove();
-                
-                let reply = (data.reply || data.detail || "No response.").replace(/<think>[\s\S]*?<\/think>/g, '').trim();
-                
-                appendMessage("ApexNet", reply, "bg-gray-800/80 border border-gray-700 self-start mr-auto rounded-tl-none text-gray-200");
-                saveChatHistory();
-            } catch (err) {
-                document.getElementById(loadingId).innerText = "❌ Network Error.";
-                document.getElementById(loadingId).className = "p-4 rounded-xl border border-red-900 self-start mr-auto rounded-tl-none text-red-400 font-mono text-sm bg-red-950/20";
-            }
-        }
-
-        function appendMessage(sender, text, classes) {
-            const chatBox = document.getElementById('chatBox');
-            const div = document.createElement('div');
-            const id = 'msg-' + Date.now();
-            div.id = id;
-            div.className = `p-4 sm:p-5 rounded-2xl max-w-[95%] sm:max-w-[85%] shadow-lg leading-relaxed ${classes}`;
-            
-            let formattedHTML = text;
-            if (sender === "ApexNet") {
-                let rawHTML = marked.parse(text);
-                formattedHTML = DOMPurify.sanitize(rawHTML, { ADD_ATTR: ['target'] });
-            } else {
-                formattedHTML = text.replace(/\n/g, "<br>");
-            }
-
-            let icon = sender === "User" ? "👤" : "🤖";
-            let nameLabel = sender === "User" ? localStorage.getItem('apex_username') : "ApexNet AI";
-            
-            div.innerHTML = `
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-6 h-6 rounded bg-black/30 flex items-center justify-center text-xs border border-white/10">${icon}</div>
-                    <div class="text-[11px] text-gray-400 font-bold uppercase tracking-widest">${nameLabel}</div>
-                </div>
-                <div class="text-[15px] prose prose-invert max-w-none">${formattedHTML}</div>`;
-            
-            chatBox.appendChild(div);
-            
-            setTimeout(() => {
-                chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-            }, 50);
-
-            if (sender === "ApexNet") {
-                setTimeout(() => {
-                    Prism.highlightAllUnder(div);
-                    if (window.MathJax) MathJax.typesetPromise([div]);
-                }, 50);
-            }
-            return id;
-        }
-
-        function saveChatHistory() {
-            const chatBox = document.getElementById('chatBox');
-            const messages = Array.from(chatBox.children).slice(-40).map(el => el.outerHTML);
-            localStorage.setItem('apex_chat_history', JSON.stringify(messages));
-        }
-
-        function loadLocalChatHistory() {
-            const saved = localStorage.getItem('apex_chat_history');
-            if (saved) {
-                try {
-                    document.getElementById('chatBox').innerHTML = JSON.parse(saved).join('');
-                    setTimeout(() => {
-                        Prism.highlightAll();
-                        if (window.MathJax) MathJax.typesetPromise();
-                        const box = document.getElementById('chatBox');
-                        box.scrollTop = box.scrollHeight;
-                    }, 200);
-                } catch(e) {}
-            }
-        }
     </script>
 </body>
 </html>
