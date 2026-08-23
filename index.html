@@ -28,24 +28,18 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* 🔥 MOBILE BUG FIXED: Using 100dvh instead of 100vh */
         body { background-color: #212121; color: #ececec; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; height: 100dvh; display: flex; overflow: hidden; }
-        
-        /* Minimalist Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #424242; border-radius: 3px; }
         
-        /* Markdown Typography Pro */
         .prose pre { background: #000000 !important; border: 1px solid #333; border-radius: 0.5rem; padding: 1rem; margin-top: 0.5rem; overflow-x: auto; }
         .prose code { font-family: 'Fira Code', monospace; font-size: 0.875rem; }
         .prose p { margin-bottom: 1rem; line-height: 1.6; }
         
-        /* Chat Input Auto-resize */
         textarea { resize: none; overflow-y: hidden; }
         textarea:focus { outline: none; }
 
-        /* Loader */
         .typing-loader { display: flex; gap: 4px; align-items: center; padding: 10px 0; }
         .typing-loader span { width: 6px; height: 6px; background-color: #888; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
         .typing-loader span:nth-child(1) { animation-delay: -0.32s; }
@@ -53,7 +47,45 @@
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
-<body class="bg-gray800 text-gray-100 flex h-[100dvh] w-full selection:bg-blue-500/30">
+<body class="bg-gray800 text-gray-100 flex h-[100dvh] w-full selection:bg-blue-500/30 relative">
+
+    <!-- 🔐 LOGIN / SIGNUP MODAL OVERLAY -->
+    <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-gray900 border border-white/10 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-6">
+            <div class="text-center">
+                <h2 id="modalTitle" class="text-xl font-bold">Access ApexNet</h2>
+                <p id="modalSub" class="text-xs text-gray-400 mt-1">Enter your credentials to connect to Colab backend</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex bg-gray800 p-1 rounded-lg border border-white/5 text-xs font-medium">
+                <button onclick="switchTab('login')" id="tabLogin" class="flex-1 py-2 rounded-md bg-blue-600 text-white transition-all">Login</button>
+                <button onclick="switchTab('signup')" id="tabSignup" class="flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all">Signup</button>
+            </div>
+
+            <!-- Form -->
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Username</label>
+                    <input type="text" id="authUsername" value="Ayushpandey_Boss" class="w-full bg-gray800 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Password</label>
+                    <input type="password" id="authPassword" value="123456789@1234" class="w-full bg-gray800 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div id="signupKeyBox" class="hidden">
+                    <label class="text-xs text-gray-400 block mb-1">Activation Key (e.g., APEX-ADMIN-9999)</label>
+                    <input type="text" id="authKey" placeholder="Enter key" class="w-full bg-gray800 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+
+                <p id="authError" class="text-xs text-red-400 text-center hidden"></p>
+
+                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition-colors text-sm">
+                    Authenticate
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Sidebar -->
     <aside class="w-[260px] bg-gray900 flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5">
@@ -62,40 +94,37 @@
                 <i class="ph ph-plus text-lg"></i> New Chat
             </button>
         </div>
-        <div class="flex-1 overflow-y-auto p-3 space-y-1" id="historyList">
-            <!-- History Items -->
-        </div>
+        <div class="flex-1 overflow-y-auto p-3 space-y-1" id="historyList"></div>
         <div class="p-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400">
             <div class="flex items-center gap-2">
                 <div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500"></div>
                 <span id="serverStatus">Connecting...</span>
             </div>
-            <i class="ph ph-gear hover:text-white cursor-pointer text-lg"></i>
+            <button onclick="logout()" title="Logout" class="hover:text-red-400 transition-colors text-sm"><i class="ph ph-sign-out"></i></button>
         </div>
     </aside>
 
-    <!-- Main Chat Content (Flex Column Layout to prevent clipping) -->
+    <!-- Main Chat Content -->
     <main class="flex-1 flex flex-col h-full w-full overflow-hidden relative">
-        <!-- Mobile Header -->
         <header class="md:hidden flex items-center justify-between p-3 border-b border-white/10 bg-gray900 text-white flex-shrink-0">
             <button onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="ph ph-list text-2xl"></i></button>
             <h1 class="font-medium text-sm">ApexNet</h1>
-            <i class="ph ph-plus text-xl cursor-pointer" onclick="createNewChat()"></i>
+            <div class="flex items-center gap-3">
+                <i class="ph ph-sign-out text-lg cursor-pointer text-red-400" onclick="logout()"></i>
+                <i class="ph ph-plus text-xl cursor-pointer" onclick="createNewChat()"></i>
+            </div>
         </header>
 
-        <!-- Chat Output Area (Scrollable Middle) -->
         <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-6 w-full">
-            <!-- Welcome Screen -->
             <div class="h-full flex flex-col items-center justify-center text-center px-4" id="welcomeScreen">
                 <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-6 shadow-lg">
                     <i class="ph ph-terminal-window text-3xl text-gray-300"></i>
                 </div>
                 <h2 class="text-2xl font-semibold mb-2">ApexNet 7.6B Engine</h2>
-                <p class="text-gray-400 text-sm max-w-md">Fetching live endpoint from Gist. Secure link connecting...</p>
+                <p class="text-gray-400 text-sm max-w-md">Fetching live endpoint from Gist & verifying session...</p>
             </div>
         </div>
 
-        <!-- Input Area (Flex Shrink 0 - Perfectly locked at bottom, never cuts off!) -->
         <div class="flex-shrink-0 w-full bg-gray800 pt-2 pb-4 px-3 md:px-8 border-t border-white/5">
             <div class="max-w-3xl mx-auto relative flex items-end bg-gray700 border border-white/10 rounded-xl overflow-hidden shadow-2xl focus-within:border-gray-500 transition-colors">
                 <textarea id="userInput" rows="1" class="w-full max-h-[150px] bg-transparent py-3 pl-4 pr-12 text-sm text-gray-100 placeholder-gray-400" placeholder="Message ApexNet..."></textarea>
@@ -104,7 +133,7 @@
                 </button>
             </div>
             <div class="text-center mt-1.5 text-[10px] text-gray-500">
-                ApexNet Mobile Console v2.0 • Powered by Gist Auto-Patcher
+                ApexNet Mobile Console v2.1 • Auth & Auto-Patcher Active
             </div>
         </div>
     </main>
@@ -112,13 +141,13 @@
     <script>
         const GIST_URL = "https://gist.githubusercontent.com/PandeyJI-9/6b0c7fa3c4ed32c7d6da9681876fb80f/raw/colab_link.txt";
         let COLAB_URL = "";
-        let AUTH_TOKEN = "";
-        const USERNAME = "Ayushpandey_Boss";
-        const PASSWORD = "123456789@1234";
+        let AUTH_TOKEN = localStorage.getItem('apex_token') || "";
         
+        let currentMode = 'login'; // 'login' or 'signup'
         let currentChatId = null;
         let chats = JSON.parse(localStorage.getItem('apex_chats_pro')) || [];
 
+        // 1. Init System & Fetch Colab URL from Gist
         async function initSystem() {
             try {
                 const cacheBuster = new Date().getTime(); 
@@ -126,26 +155,13 @@
                 COLAB_URL = (await linkRes.text()).trim().replace(/\/$/, "");
                 console.log("🔗 Target Locked:", COLAB_URL);
 
-                const loginRes = await fetch(`${COLAB_URL}/v1/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: USERNAME, password: PASSWORD })
-                });
+                document.getElementById('serverStatus').innerText = 'System Online';
+                document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500';
 
-                if (loginRes.ok) {
-                    const data = await loginRes.json();
-                    AUTH_TOKEN = data.token;
-                    document.getElementById('serverStatus').innerText = 'System Online';
-                    document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500';
-                    document.getElementById('welcomeScreen').innerHTML = `
-                        <div class="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-6">
-                            <i class="ph ph-check text-3xl text-blue-500"></i>
-                        </div>
-                        <h2 class="text-2xl font-semibold mb-2">System Ready</h2>
-                        <p class="text-gray-400 text-sm">Gist URL patched successfully. Secure connection established.</p>
-                    `;
+                if (!AUTH_TOKEN) {
+                    document.getElementById('authModal').classList.remove('hidden');
                 } else {
-                    throw new Error("Auth Failed");
+                    verifyToken();
                 }
             } catch (err) {
                 console.error("System Init Error:", err);
@@ -154,6 +170,94 @@
             }
         }
 
+        // 2. Auth Modal Tabs Switching
+        function switchTab(mode) {
+            currentMode = mode;
+            const tabLogin = document.getElementById('tabLogin');
+            const tabSignup = document.getElementById('tabSignup');
+            const signupKeyBox = document.getElementById('signupKeyBox');
+            const submitBtn = document.getElementById('authSubmitBtn');
+
+            if (mode === 'login') {
+                tabLogin.className = "flex-1 py-2 rounded-md bg-blue-600 text-white transition-all";
+                tabSignup.className = "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all";
+                signupKeyBox.classList.add('hidden');
+                submitBtn.innerText = "Authenticate";
+            } else {
+                tabSignup.className = "flex-1 py-2 rounded-md bg-blue-600 text-white transition-all";
+                tabLogin.className = "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all";
+                signupKeyBox.classList.remove('hidden');
+                submitBtn.innerText = "Create Account";
+            }
+        }
+
+        // 3. Handle Login / Signup Submit
+        async function handleAuthSubmit() {
+            const username = document.getElementById('authUsername').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+            const key = document.getElementById('authKey').value.trim();
+            const errBox = document.getElementById('authError');
+
+            if (!username || !password) {
+                errBox.innerText = "Please fill all required fields";
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                let endpoint = currentMode === 'login' ? '/v1/auth/login' : '/v1/auth/signup';
+                let payload = currentMode === 'login' ? { username, password } : { username, password, activation_key: key };
+
+                const res = await fetch(`${COLAB_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    AUTH_TOKEN = data.token;
+                    localStorage.setItem('apex_token', AUTH_TOKEN);
+                    document.getElementById('authModal').classList.add('hidden');
+                    errBox.classList.add('hidden');
+                    document.getElementById('welcomeScreen').innerHTML = `
+                        <div class="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-6">
+                            <i class="ph ph-check text-3xl text-blue-500"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold mb-2">Welcome Back, ${username}!</h2>
+                        <p class="text-gray-400 text-sm">Session verified successfully. Start chatting below.</p>
+                    `;
+                } else {
+                    const errData = await res.json();
+                    errBox.innerText = errData.detail || "Authentication failed";
+                    errBox.classList.remove('hidden');
+                }
+            } catch (err) {
+                errBox.innerText = "Server error. Check if Colab is running.";
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        async function verifyToken() {
+            // Quick check by sending a test request or assuming token is valid until API rejects
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('welcomeScreen').innerHTML = `
+                <div class="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-6">
+                    <i class="ph ph-check text-3xl text-blue-500"></i>
+                </div>
+                <h2 class="text-2xl font-semibold mb-2">System Ready</h2>
+                <p class="text-gray-400 text-sm">Restored session from local storage.</p>
+            `;
+        }
+
+        // 4. Logout Feature
+        function logout() {
+            localStorage.removeItem('apex_token');
+            AUTH_TOKEN = "";
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        // 5. Chat History & Logic
         function createNewChat() {
             currentChatId = Date.now().toString();
             chats.unshift({ id: currentChatId, title: "New Conversation", messages: [] });
@@ -189,7 +293,7 @@
 
         function appendMessage(role, text, save = true) {
             const chatBox = document.getElementById('chatBox');
-            if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
+            if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen'].remove();
 
             const isUser = role === 'user';
             let formattedText = isUser ? text : marked.parse(text);
@@ -252,7 +356,7 @@
 
             if (!AUTH_TOKEN) {
                 document.getElementById('typingIndicator').remove();
-                appendMessage('ai', "⚠️ Backend connection missing. Please ensure Colab is running.");
+                document.getElementById('authModal').classList.remove('hidden');
                 return;
             }
 
@@ -264,6 +368,11 @@
                 });
 
                 document.getElementById('typingIndicator').remove();
+                if (res.status === 401) {
+                    logout();
+                    appendMessage('ai', "⚠️ Session expired. Please login again.");
+                    return;
+                }
                 if (res.ok) {
                     const data = await res.json();
                     appendMessage('ai', data.reply);
@@ -272,7 +381,7 @@
                 }
             } catch (err) {
                 document.getElementById('typingIndicator').remove();
-                appendMessage('ai', `🚨 Tunnel disconnected. Is your Colab session still active?`);
+                appendMessage('ai', `🚨 Tunnel disconnected. Is your Colab session active?`);
             }
         }
 
