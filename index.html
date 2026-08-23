@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ApexNet | Elite Developer Console</title>
+    <title>ApexNet | Gemini Elite Console</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { gray900: '#171717', gray800: '#212121', gray700: '#2f2f2f' } } } }
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { geminiDark: '#131314', geminiCard: '#1e1f20', geminiHover: '#2d2e30' } } } }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
@@ -14,100 +14,93 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        body { background-color: #212121; color: #ececec; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; height: 100dvh; display: flex; overflow: hidden; }
+        body { background-color: #131314; color: #e3e3e3; font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; height: 100dvh; display: flex; overflow: hidden; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 3px; }
-        .prose pre { background: #000000 !important; border: 1px solid #333; border-radius: 0.5rem; padding: 1rem; margin-top: 0.5rem; overflow-x: auto; }
+        ::-webkit-scrollbar-thumb { background: #444746; border-radius: 3px; }
+        .prose pre { background: #000000 !important; border: 1px solid #444; border-radius: 0.75rem; padding: 1rem; margin-top: 0.5rem; overflow-x: auto; }
         .prose code { font-family: 'Fira Code', monospace; font-size: 0.875rem; }
         .prose p { margin-bottom: 1rem; line-height: 1.6; }
         textarea { resize: none; overflow-y: hidden; }
         textarea:focus { outline: none; }
-        .typing-loader { display: flex; gap: 4px; align-items: center; padding: 10px 0; }
-        .typing-loader span { width: 6px; height: 6px; background-color: #888; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
-        .typing-loader span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-loader span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        
+        /* Gemini Glowing Sparkle Animation */
+        @keyframes geminiGlow { 0% { opacity: 0.4; } 50% { opacity: 1; text-shadow: 0 0 15px #8ab4f8; } 100% { opacity: 0.4; } }
+        .gemini-sparkle { animation: geminiGlow 2s infinite ease-in-out; }
     </style>
 </head>
-<body class="bg-gray800 text-gray-100 flex h-[100dvh] w-full selection:bg-blue-500/30 relative">
+<body class="bg-geminiDark text-gray-100 flex h-[100dvh] w-full selection:bg-blue-500/30 relative">
 
     <!-- 🔐 LOGIN MODAL -->
-    <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-gray900 border border-white/10 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-6">
+    <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-geminiCard border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl space-y-6">
             <div class="text-center">
-                <h2 id="modalTitle" class="text-xl font-bold">Access ApexNet</h2>
-                <p id="modalSub" class="text-xs text-gray-400 mt-1">Enter your credentials to connect</p>
+                <div class="inline-flex p-3 bg-blue-500/10 rounded-2xl text-blue-400 mb-3"><i class="ph ph-sparkle text-3xl"></i></div>
+                <h2 class="text-2xl font-bold tracking-tight">ApexNet Gemini</h2>
+                <p class="text-xs text-gray-400 mt-1">Authenticate to unlock Neural Engine</p>
             </div>
-            <div class="flex bg-gray800 p-1 rounded-lg border border-white/5 text-xs font-medium">
-                <button onclick="switchTab('login')" id="tabLogin" class="flex-1 py-2 rounded-md bg-blue-600 text-white transition-all">Login</button>
-                <button onclick="switchTab('signup')" id="tabSignup" class="flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all">Signup</button>
+            <div class="flex bg-[#131314] p-1 rounded-xl border border-white/5 text-xs font-medium">
+                <button onclick="switchTab('login')" id="tabLogin" class="flex-1 py-2.5 rounded-lg bg-blue-600 text-white transition-all">Login</button>
+                <button onclick="switchTab('signup')" id="tabSignup" class="flex-1 py-2.5 rounded-lg text-gray-400 hover:text-white transition-all">Signup</button>
             </div>
             <div class="space-y-4">
-                <div>
-                    <label class="text-xs text-gray-400 block mb-1">Username</label>
-                    <input type="text" id="authUsername" value="Ayushpandey_Boss" class="w-full bg-gray800 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400 block mb-1">Password</label>
-                    <input type="password" id="authPassword" value="123456789@1234" class="w-full bg-gray800 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div id="signupKeyBox" class="hidden">
-                    <label class="text-xs text-gray-400 block mb-1">Activation Key</label>
-                    <input type="text" id="authKey" placeholder="APEX-ADMIN-9999" class="w-full bg-gray800 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
-                </div>
+                <div><label class="text-xs text-gray-400 block mb-1">Username</label><input type="text" id="authUsername" value="Ayushpandey_Boss" class="w-full bg-[#131314] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500"></div>
+                <div><label class="text-xs text-gray-400 block mb-1">Password</label><input type="password" id="authPassword" value="123456789@1234" class="w-full bg-[#131314] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500"></div>
+                <div id="signupKeyBox" class="hidden"><label class="text-xs text-gray-400 block mb-1">Activation Key</label><input type="text" id="authKey" placeholder="APEX-ADMIN-9999" class="w-full bg-[#131314] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500"></div>
                 <p id="authError" class="text-xs text-red-400 text-center hidden"></p>
-                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition-colors text-sm">Authenticate</button>
+                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition-colors text-sm shadow-lg shadow-blue-600/30">Authenticate</button>
             </div>
         </div>
     </div>
 
     <!-- Sidebar -->
-    <aside class="w-[260px] bg-gray900 flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5">
-        <div class="p-3">
-            <button onclick="createNewChat()" class="w-full flex items-center gap-3 px-3 py-3 rounded-md hover:bg-white/5 border border-white/10 transition-colors text-sm font-medium">
-                <i class="ph ph-plus text-lg"></i> New Chat
+    <aside class="w-[280px] bg-geminiCard flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5">
+        <div class="p-4">
+            <button onclick="createNewChat()" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-geminiHover hover:bg-[#333537] transition-all text-sm font-medium shadow-sm">
+                <i class="ph ph-plus text-lg text-blue-400"></i> New Chat
             </button>
         </div>
-        <div class="flex-1 overflow-y-auto p-3 space-y-1" id="historyList"></div>
+        <div class="flex-1 overflow-y-auto px-3 space-y-1" id="historyList"></div>
         <div class="p-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400">
             <div class="flex items-center gap-2">
                 <div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500"></div>
                 <span id="serverStatus">Connecting...</span>
             </div>
-            <button onclick="logout()" title="Logout" class="hover:text-red-400 transition-colors text-sm"><i class="ph ph-sign-out"></i></button>
+            <button onclick="logout()" title="Logout" class="hover:text-red-400 transition-colors text-base"><i class="ph ph-sign-out"></i></button>
         </div>
     </aside>
 
     <!-- Main Chat Content -->
-    <main class="flex-1 flex flex-col h-full w-full overflow-hidden relative">
-        <header class="md:hidden flex items-center justify-between p-3 border-b border-white/10 bg-gray900 text-white flex-shrink-0">
+    <main class="flex-1 flex flex-col h-full w-full overflow-hidden relative bg-geminiDark">
+        <header class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-geminiCard text-white flex-shrink-0">
             <button onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="ph ph-list text-2xl"></i></button>
-            <h1 class="font-medium text-sm">ApexNet</h1>
-            <div class="flex items-center gap-3">
-                <i class="ph ph-sign-out text-lg cursor-pointer text-red-400" onclick="logout()"></i>
+            <h1 class="font-medium text-sm flex items-center gap-2"><i class="ph ph-sparkle text-blue-400"></i> ApexNet</h1>
+            <div class="flex items-center gap-4">
+                <i class="ph ph-sign-out text-xl cursor-pointer text-red-400" onclick="logout()"></i>
                 <i class="ph ph-plus text-xl cursor-pointer" onclick="createNewChat()"></i>
             </div>
         </header>
 
-        <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-6 w-full">
+        <!-- Chat Container -->
+        <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-4xl mx-auto flex flex-col gap-6">
             <div class="h-full flex flex-col items-center justify-center text-center px-4" id="welcomeScreen">
-                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-6 shadow-lg">
-                    <i class="ph ph-terminal-window text-3xl text-gray-300"></i>
+                <div class="w-16 h-16 bg-blue-500/10 rounded-3xl flex items-center justify-center mb-4 gemini-sparkle">
+                    <i class="ph ph-sparkle text-3xl text-blue-400"></i>
                 </div>
-                <h2 class="text-2xl font-semibold mb-2">ApexNet 7.6B Engine</h2>
-                <p class="text-gray-400 text-sm max-w-md">Fetching live endpoint from Gist & verifying session...</p>
+                <h2 class="text-3xl font-bold tracking-tight mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Hello, Ayush</h2>
+                <p class="text-gray-400 text-sm max-w-sm">How can ApexNet Neural Engine help you code today?</p>
             </div>
         </div>
 
-        <div class="flex-shrink-0 w-full bg-gray800 pt-2 pb-4 px-3 md:px-8 border-t border-white/5">
-            <div class="max-w-3xl mx-auto relative flex items-end bg-gray700 border border-white/10 rounded-xl overflow-hidden shadow-2xl focus-within:border-gray-500 transition-colors">
-                <textarea id="userInput" rows="1" class="w-full max-h-[150px] bg-transparent py-3 pl-4 pr-12 text-sm text-gray-100 placeholder-gray-400" placeholder="Message ApexNet..."></textarea>
-                <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-2.5 p-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors">
-                    <i class="ph ph-paper-plane-right text-lg"></i>
+        <!-- Input Area (Gemini Floating Style) -->
+        <div class="flex-shrink-0 w-full bg-transparent pb-6 pt-2 px-4 md:px-8">
+            <div class="max-w-3xl mx-auto relative flex items-end bg-geminiCard border border-white/10 rounded-2xl overflow-hidden shadow-2xl focus-within:border-blue-500/50 transition-all p-2">
+                <textarea id="userInput" rows="1" class="w-full max-h-[150px] bg-transparent py-2.5 pl-3 pr-12 text-sm text-gray-100 placeholder-gray-500" placeholder="Enter a prompt here..."></textarea>
+                <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-lg">
+                    <i class="ph ph-arrow-up text-lg font-bold"></i>
                 </button>
             </div>
-            <div class="text-center mt-1.5 text-[10px] text-gray-500">ApexNet Mobile Console v2.1 • Bug-Free Edition</div>
+            <div class="text-center mt-2 text-[10px] text-gray-500">Gemini Live Typewriter UI • Powered by 7.6B GPU Engine</div>
         </div>
     </main>
 
@@ -115,7 +108,6 @@
         const GIST_URL = "https://gist.githubusercontent.com/PandeyJI-9/6b0c7fa3c4ed32c7d6da9681876fb80f/raw/colab_link.txt";
         let COLAB_URL = "";
         let AUTH_TOKEN = localStorage.getItem('apex_token') || "";
-        
         let currentMode = 'login';
         let currentChatId = null;
         let chats = JSON.parse(localStorage.getItem('apex_chats_pro')) || [];
@@ -126,14 +118,11 @@
                 const linkRes = await fetch(`${GIST_URL}?t=${cacheBuster}`);
                 COLAB_URL = (await linkRes.text()).trim().replace(/\/$/, "");
                 
-                document.getElementById('serverStatus').innerText = 'System Online';
+                document.getElementById('serverStatus').innerText = 'Neural Online';
                 document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500';
 
-                if (!AUTH_TOKEN) {
-                    document.getElementById('authModal').classList.remove('hidden');
-                } else {
-                    verifyToken();
-                }
+                if (!AUTH_TOKEN) document.getElementById('authModal').classList.remove('hidden');
+                else verifyToken();
             } catch (err) {
                 document.getElementById('serverStatus').innerText = 'Offline';
                 document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-red-500';
@@ -142,8 +131,8 @@
 
         function switchTab(mode) {
             currentMode = mode;
-            document.getElementById('tabLogin').className = mode === 'login' ? "flex-1 py-2 rounded-md bg-blue-600 text-white transition-all" : "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all";
-            document.getElementById('tabSignup').className = mode === 'signup' ? "flex-1 py-2 rounded-md bg-blue-600 text-white transition-all" : "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition-all";
+            document.getElementById('tabLogin').className = mode === 'login' ? "flex-1 py-2.5 rounded-lg bg-blue-600 text-white transition-all" : "flex-1 py-2.5 rounded-lg text-gray-400 hover:text-white transition-all";
+            document.getElementById('tabSignup').className = mode === 'signup' ? "flex-1 py-2.5 rounded-lg bg-blue-600 text-white transition-all" : "flex-1 py-2.5 rounded-lg text-gray-400 hover:text-white transition-all";
             document.getElementById('signupKeyBox').classList.toggle('hidden', mode === 'login');
             document.getElementById('authSubmitBtn').innerText = mode === 'login' ? "Authenticate" : "Create Account";
         }
@@ -172,7 +161,7 @@
                 } else {
                     const errData = await res.json();
                     errBox.innerText = errData.detail || "Auth Failed";
-                    errBox.classList.remove('hidden');
+                    errBox.classList.add('hidden');
                 }
             } catch (err) {
                 errBox.innerText = "Server error. Is Colab running?";
@@ -180,37 +169,10 @@
             }
         }
 
-        function verifyToken() {
-            document.getElementById('authModal').classList.add('hidden');
-            let welcome = document.getElementById('welcomeScreen');
-            if (welcome) {
-                welcome.innerHTML = `
-                    <div class="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-6"><i class="ph ph-check text-3xl text-blue-500"></i></div>
-                    <h2 class="text-2xl font-semibold mb-2">System Ready</h2>
-                    <p class="text-gray-400 text-sm">Session verified successfully. Start chatting below.</p>`;
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('apex_token');
-            AUTH_TOKEN = "";
-            document.getElementById('authModal').classList.remove('hidden');
-        }
-
-        function createNewChat() {
-            currentChatId = Date.now().toString();
-            chats.unshift({ id: currentChatId, title: "New Conversation", messages: [] });
-            saveChats();
-            document.getElementById('chatBox').innerHTML = ''; 
-        }
-
-        function loadChat(id) {
-            currentChatId = id;
-            document.getElementById('chatBox').innerHTML = '';
-            const chat = chats.find(c => c.id === id);
-            if (chat) chat.messages.forEach(msg => appendMessage(msg.role, msg.content, false));
-        }
-
+        function verifyToken() { document.getElementById('authModal').classList.add('hidden'); let welcome = document.getElementById('welcomeScreen'); if (welcome) welcome.remove(); }
+        function logout() { localStorage.removeItem('apex_token'); AUTH_TOKEN = ""; document.getElementById('authModal').classList.remove('hidden'); }
+        function createNewChat() { currentChatId = Date.now().toString(); chats.unshift({ id: currentChatId, title: "New Conversation", messages: [] }); saveChats(); document.getElementById('chatBox').innerHTML = ''; }
+        function loadChat(id) { currentChatId = id; document.getElementById('chatBox').innerHTML = ''; const chat = chats.find(c => c.id === id); if (chat) chat.messages.forEach(msg => appendMessageUI(msg.role, msg.content)); }
         function saveChats() { localStorage.setItem('apex_chats_pro', JSON.stringify(chats)); renderHistory(); }
 
         function renderHistory() {
@@ -218,74 +180,110 @@
             list.innerHTML = '';
             chats.forEach(chat => {
                 const isActive = chat.id === currentChatId;
-                list.innerHTML += `<button onclick="loadChat('${chat.id}')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-md ${isActive ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5'} transition-colors text-sm truncate"><i class="ph ph-chat-teardrop text-lg flex-shrink-0"></i><span class="truncate">${chat.title}</span></button>`;
+                list.innerHTML += `<button onclick="loadChat('${chat.id}')" class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl ${isActive ? 'bg-geminiHover text-white' : 'text-gray-400 hover:bg-geminiHover/50'} transition-all text-sm truncate"><i class="ph ph-chat-teardrop text-base"></i><span class="truncate">${chat.title}</span></button>`;
             });
         }
 
-        function appendMessage(role, text, save = true) {
+        function appendMessageUI(role, text) {
             const chatBox = document.getElementById('chatBox');
-            // 🔥 BUG FIXED HERE: Removed the typo ']' 
-            const welcome = document.getElementById('welcomeScreen');
-            if (welcome) welcome.remove();
+            if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
 
             const isUser = role === 'user';
             const msgDiv = document.createElement('div');
-            msgDiv.className = `w-full flex justify-center py-6 ${isUser ? 'bg-transparent' : 'bg-gray800 border-y border-white/5'}`;
-            msgDiv.innerHTML = `
-                <div class="max-w-3xl w-full px-4 flex gap-4 md:gap-6">
-                    <div class="w-8 h-8 rounded-sm flex-shrink-0 flex items-center justify-center ${isUser ? 'bg-blue-600' : 'bg-green-600'}"><i class="${isUser ? 'ph ph-user' : 'ph ph-robot'} text-white"></i></div>
-                    <div class="prose prose-invert max-w-none text-sm md:text-base text-gray-200 w-full overflow-hidden">${isUser ? text : marked.parse(text)}</div>
-                </div>`;
+            msgDiv.className = `flex gap-4 w-full max-w-3xl mx-auto ${isUser ? 'justify-end' : 'justify-start'} my-4`;
+            
+            if (isUser) {
+                msgDiv.innerHTML = `<div class="bg-geminiHover text-white px-5 py-3 rounded-3xl max-w-[80%] text-sm md:text-base shadow-md">${text}</div>`;
+            } else {
+                msgDiv.innerHTML = `
+                    <div class="flex gap-3 w-full">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/10 flex-shrink-0 flex items-center justify-center text-blue-400"><i class="ph ph-sparkle text-lg"></i></div>
+                        <div class="prose prose-invert max-w-none text-sm md:text-base text-gray-200 w-full">${marked.parse(text)}</div>
+                    </div>`;
+            }
             chatBox.appendChild(msgDiv);
             document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
             chatBox.scrollTop = chatBox.scrollHeight;
-
-            if (save && currentChatId) {
-                const chat = chats.find(c => c.id === currentChatId);
-                if (chat) {
-                    if (chat.messages.length === 0 && isUser) chat.title = text.substring(0, 30) + "...";
-                    chat.messages.push({ role, content: text });
-                    saveChats();
-                }
-            }
         }
 
-        function showTyping() {
-            const chatBox = document.getElementById('chatBox');
-            const typingDiv = document.createElement('div');
-            typingDiv.id = 'typingIndicator';
-            typingDiv.className = 'w-full flex justify-center py-6 bg-gray800 border-y border-white/5';
-            typingDiv.innerHTML = `<div class="max-w-3xl w-full px-4 flex gap-4 md:gap-6"><div class="w-8 h-8 rounded-sm flex-shrink-0 flex items-center justify-center bg-green-600"><i class="ph ph-robot text-white"></i></div><div class="typing-loader"><span></span><span></span><span></span></div></div>`;
-            chatBox.appendChild(typingDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
+        // 🔥 GEMINI STREAMING TYPEWRITER HANDLER
         async function handleSend() {
             const input = document.getElementById('userInput');
             const text = input.value.trim();
             if (!text) return;
 
             if (!currentChatId) createNewChat();
-            appendMessage('user', text);
+            
+            appendMessageUI('user', text);
             input.value = ''; input.style.height = 'auto';
-            showTyping();
 
-            if (!AUTH_TOKEN) {
-                document.getElementById('typingIndicator').remove();
-                document.getElementById('authModal').classList.remove('hidden');
-                return;
-            }
+            if (!AUTH_TOKEN) { document.getElementById('authModal').classList.remove('hidden'); return; }
+
+            const chat = chats.find(c => c.id === currentChatId);
+            chat.messages.push({ role: 'user', content: text });
+            saveChats();
+
+            // Create AI Streaming Bubble Container
+            const chatBox = document.getElementById('chatBox');
+            if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
+
+            const aiDiv = document.createElement('div');
+            aiDiv.className = `flex gap-4 w-full max-w-3xl mx-auto justify-start my-4`;
+            aiDiv.innerHTML = `
+                <div class="flex gap-3 w-full">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/10 flex-shrink-0 flex items-center justify-center text-blue-400"><i class="ph ph-sparkle text-lg gemini-sparkle"></i></div>
+                    <div class="prose prose-invert max-w-none text-sm md:text-base text-gray-200 w-full" id="streamingContent"><span class="inline-block w-2 h-4 bg-blue-400 animate-pulse ml-1"></span></div>
+                </div>`;
+            chatBox.appendChild(aiDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const contentElem = document.getElementById('streamingContent');
+            let fullReply = "";
 
             try {
-                const res = await fetch(`${COLAB_URL}/v1/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` }, body: JSON.stringify({ message: text }) });
-                document.getElementById('typingIndicator').remove();
-                
-                if (res.status === 401) { logout(); appendMessage('ai', "⚠️ Session expired. Please login again."); return; }
-                if (res.ok) { const data = await res.json(); appendMessage('ai', data.reply); } 
-                else { appendMessage('ai', `⚠️ HTTP Error: ${res.status}`); }
+                const response = await fetch(`${COLAB_URL}/v1/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+                    body: JSON.stringify({ messages: chat.messages })
+                });
+
+                if (!response.ok) throw new Error("Stream failed");
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split("\n");
+
+                    for (let line of lines) {
+                        if (line.startsWith("data: ")) {
+                            const dataStr = line.replace("data: ", "").trim();
+                            if (dataStr === "[DONE]") break;
+                            try {
+                                const parsed = JSON.parse(dataStr);
+                                if (parsed.content) {
+                                    fullReply += parsed.content;
+                                    contentElem.innerHTML = marked.parse(fullReply) + '<span class="inline-block w-2 h-4 bg-blue-400 animate-pulse ml-1"></span>';
+                                    chatBox.scrollTop = chatBox.scrollHeight;
+                                }
+                            } catch (e) {}
+                        }
+                    }
+                }
+
+                // Remove blinking cursor when done
+                contentElem.innerHTML = marked.parse(fullReply);
+                document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+
+                chat.messages.push({ role: 'assistant', content: fullReply });
+                saveChats();
+
             } catch (err) {
-                document.getElementById('typingIndicator').remove();
-                appendMessage('ai', `🚨 Tunnel disconnected. Is your Colab session active?`);
+                contentElem.innerHTML = "🚨 Streaming disconnected. Check Colab session.";
             }
         }
 
