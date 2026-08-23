@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ApexNet | Elite Developer Console</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,17 +24,17 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <!-- Phosphor Icons (Cleaner than FontAwesome) -->
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        body { background-color: #212121; color: #ececec; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; height: 100vh; display: flex; overflow: hidden; }
+        /* 🔥 MOBILE BUG FIXED: Using 100dvh instead of 100vh */
+        body { background-color: #212121; color: #ececec; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; height: 100dvh; display: flex; overflow: hidden; }
         
         /* Minimalist Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #525252; }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 3px; }
         
         /* Markdown Typography Pro */
         .prose pre { background: #000000 !important; border: 1px solid #333; border-radius: 0.5rem; padding: 1rem; margin-top: 0.5rem; overflow-x: auto; }
@@ -53,10 +53,10 @@
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
-<body class="bg-gray800 text-gray-100 flex h-screen w-full selection:bg-blue-500/30">
+<body class="bg-gray800 text-gray-100 flex h-[100dvh] w-full selection:bg-blue-500/30">
 
     <!-- Sidebar -->
-    <aside class="w-[260px] bg-gray900 flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5 transition-all">
+    <aside class="w-[260px] bg-gray900 flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5">
         <div class="p-3">
             <button onclick="createNewChat()" class="w-full flex items-center gap-3 px-3 py-3 rounded-md hover:bg-white/5 border border-white/10 transition-colors text-sm font-medium">
                 <i class="ph ph-plus text-lg"></i> New Chat
@@ -74,47 +74,42 @@
         </div>
     </aside>
 
-    <!-- Main Chat Content -->
-    <main class="flex-1 flex flex-col h-full relative w-full max-w-full">
+    <!-- Main Chat Content (Flex Column Layout to prevent clipping) -->
+    <main class="flex-1 flex flex-col h-full w-full overflow-hidden relative">
         <!-- Mobile Header -->
-        <header class="md:hidden flex items-center justify-between p-3 border-b border-white/10 bg-gray900 text-white">
+        <header class="md:hidden flex items-center justify-between p-3 border-b border-white/10 bg-gray900 text-white flex-shrink-0">
             <button onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="ph ph-list text-2xl"></i></button>
             <h1 class="font-medium text-sm">ApexNet</h1>
             <i class="ph ph-plus text-xl cursor-pointer" onclick="createNewChat()"></i>
         </header>
 
-        <!-- Chat Output Area -->
-        <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-6 pb-32">
+        <!-- Chat Output Area (Scrollable Middle) -->
+        <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-6 w-full">
             <!-- Welcome Screen -->
             <div class="h-full flex flex-col items-center justify-center text-center px-4" id="welcomeScreen">
                 <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-6 shadow-lg">
                     <i class="ph ph-terminal-window text-3xl text-gray-300"></i>
                 </div>
                 <h2 class="text-2xl font-semibold mb-2">ApexNet 7.6B Engine</h2>
-                <p class="text-gray-400 text-sm max-w-md">System is fetching the live API endpoint from your GitHub Gist. Please wait while the connection is established.</p>
+                <p class="text-gray-400 text-sm max-w-md">Fetching live endpoint from Gist. Secure link connecting...</p>
             </div>
         </div>
 
-        <!-- Input Area (Fixed Bottom) -->
-        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-gray800 via-gray800 to-transparent pt-6 pb-6 px-4 md:px-8">
+        <!-- Input Area (Flex Shrink 0 - Perfectly locked at bottom, never cuts off!) -->
+        <div class="flex-shrink-0 w-full bg-gray800 pt-2 pb-4 px-3 md:px-8 border-t border-white/5">
             <div class="max-w-3xl mx-auto relative flex items-end bg-gray700 border border-white/10 rounded-xl overflow-hidden shadow-2xl focus-within:border-gray-500 transition-colors">
-                <textarea id="userInput" rows="1" class="w-full max-h-[200px] bg-transparent py-4 pl-4 pr-12 text-sm text-gray-100 placeholder-gray-400" placeholder="Message ApexNet..."></textarea>
-                <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                <textarea id="userInput" rows="1" class="w-full max-h-[150px] bg-transparent py-3 pl-4 pr-12 text-sm text-gray-100 placeholder-gray-400" placeholder="Message ApexNet..."></textarea>
+                <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-2.5 p-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors">
                     <i class="ph ph-paper-plane-right text-lg"></i>
                 </button>
             </div>
-            <div class="text-center mt-2 text-[10px] text-gray-500">
-                ApexNet can make mistakes. Verify critical code on your POCO F4 environment.
+            <div class="text-center mt-1.5 text-[10px] text-gray-500">
+                ApexNet Mobile Console v2.0 • Powered by Gist Auto-Patcher
             </div>
         </div>
     </main>
 
     <script>
-        // ==========================================
-        // 🛠️ BACKEND LOGIC (Injected into UI)
-        // ==========================================
-        
-        // ⚠️ Apna Raw Gist Link yahan confirm kar lena
         const GIST_URL = "https://gist.githubusercontent.com/PandeyJI-9/6b0c7fa3c4ed32c7d6da9681876fb80f/raw/colab_link.txt";
         let COLAB_URL = "";
         let AUTH_TOKEN = "";
@@ -124,7 +119,6 @@
         let currentChatId = null;
         let chats = JSON.parse(localStorage.getItem('apex_chats_pro')) || [];
 
-        // 1. Boot Sequence & Auto-Patch
         async function initSystem() {
             try {
                 const cacheBuster = new Date().getTime(); 
@@ -160,7 +154,6 @@
             }
         }
 
-        // 2. Chat UI Logic
         function createNewChat() {
             currentChatId = Date.now().toString();
             chats.unshift({ id: currentChatId, title: "New Conversation", messages: [] });
@@ -194,7 +187,6 @@
             });
         }
 
-        // 3. Message Rendering & Syntax Highlighting
         function appendMessage(role, text, save = true) {
             const chatBox = document.getElementById('chatBox');
             if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
@@ -217,7 +209,6 @@
             `;
             chatBox.appendChild(msgDiv);
             
-            // Apply highlight.js to new code blocks
             document.querySelectorAll('pre code').forEach((el) => { hljs.highlightElement(el); });
             chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -248,7 +239,6 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // 4. API Communication
         async function handleSend() {
             const input = document.getElementById('userInput');
             const text = input.value.trim();
@@ -286,7 +276,6 @@
             }
         }
 
-        // Input Auto-resize & Enter Key
         const input = document.getElementById('userInput');
         input.addEventListener('input', function() {
             this.style.height = 'auto';
@@ -296,12 +285,10 @@
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
         });
 
-        // Initialize
         if (chats.length === 0) createNewChat();
         else loadChat(chats[0].id);
         renderHistory();
         initSystem();
-
     </script>
 </body>
 </html>
