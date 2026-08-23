@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexNet 7.6B | Elite AI</title>
+    <title>ApexNet | Elite Developer Console</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,123 +12,126 @@
             theme: {
                 extend: {
                     colors: {
-                        glass: "rgba(17, 25, 40, 0.75)",
-                        glassBorder: "rgba(255, 255, 255, 0.125)",
+                        gray900: '#171717',
+                        gray800: '#212121',
+                        gray700: '#2f2f2f',
                     }
                 }
             }
         }
     </script>
-    <!-- Markdown & Syntax Highlighting -->
+    <!-- Markdown & Highlight.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Phosphor Icons (Cleaner than FontAwesome) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* Premium Glassmorphism & Animations */
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            color: #f8fafc;
-            font-family: 'Inter', sans-serif;
-            margin: 0; height: 100vh; overflow: hidden;
-        }
-        .glass-panel {
-            background: var(--tw-colors-glass);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--tw-colors-glassBorder);
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        body { background-color: #212121; color: #ececec; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; height: 100vh; display: flex; overflow: hidden; }
+        
+        /* Minimalist Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #525252; }
         
-        .chat-container { height: calc(100vh - 140px); overflow-y: auto; scroll-behavior: smooth; }
-        .message-ai { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0 1rem 1rem 1rem; }
-        .message-user { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 1rem 0 1rem 1rem; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
+        /* Markdown Typography Pro */
+        .prose pre { background: #000000 !important; border: 1px solid #333; border-radius: 0.5rem; padding: 1rem; margin-top: 0.5rem; overflow-x: auto; }
+        .prose code { font-family: 'Fira Code', monospace; font-size: 0.875rem; }
+        .prose p { margin-bottom: 1rem; line-height: 1.6; }
         
-        /* Code Block Styling */
-        pre { background: #1a1a2e !important; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; border: 1px solid rgba(255,255,255,0.1); margin-top: 0.5rem;}
-        code { font-family: 'Fira Code', monospace; }
-        
-        /* Typing indicator animation */
-        .dot { animation: blink 1.4s infinite both; height: 8px; width: 8px; background: #fff; border-radius: 50%; display: inline-block; margin: 0 2px; }
-        .dot:nth-child(1) { animation-delay: 0.2s; }
-        .dot:nth-child(2) { animation-delay: 0.4s; }
-        .dot:nth-child(3) { animation-delay: 0.6s; }
-        @keyframes blink { 0% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0.2; } }
+        /* Chat Input Auto-resize */
+        textarea { resize: none; overflow-y: hidden; }
+        textarea:focus { outline: none; }
+
+        /* Loader */
+        .typing-loader { display: flex; gap: 4px; align-items: center; padding: 10px 0; }
+        .typing-loader span { width: 6px; height: 6px; background-color: #888; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-loader span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-loader span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
-<body class="flex">
+<body class="bg-gray800 text-gray-100 flex h-screen w-full selection:bg-blue-500/30">
 
-    <!-- Sidebar (History) -->
-    <aside class="glass-panel w-72 h-full flex flex-col hidden md:flex border-r transition-all duration-300 z-20">
-        <div class="p-4 border-b border-white/10 flex justify-between items-center">
-            <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">ApexNet 7.6B</h1>
-            <button onclick="createNewChat()" class="text-gray-400 hover:text-white"><i class="fas fa-plus"></i></button>
+    <!-- Sidebar -->
+    <aside class="w-[260px] bg-gray900 flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5 transition-all">
+        <div class="p-3">
+            <button onclick="createNewChat()" class="w-full flex items-center gap-3 px-3 py-3 rounded-md hover:bg-white/5 border border-white/10 transition-colors text-sm font-medium">
+                <i class="ph ph-plus text-lg"></i> New Chat
+            </button>
         </div>
-        <div class="p-3 text-sm text-gray-400 uppercase tracking-wider font-semibold">Chat History</div>
-        <div id="historyList" class="flex-1 overflow-y-auto p-2 space-y-2">
-            <!-- Dynamic History injected here -->
+        <div class="flex-1 overflow-y-auto p-3 space-y-1" id="historyList">
+            <!-- History Items -->
         </div>
-        <div class="p-4 border-t border-white/10 text-xs text-gray-500 flex items-center justify-between">
-            <span>Server Status:</span>
-            <span id="serverStatus" class="text-yellow-400 flex items-center gap-1"><i class="fas fa-circle text-[8px]"></i> Fetching...</span>
+        <div class="p-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400">
+            <div class="flex items-center gap-2">
+                <div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                <span id="serverStatus">Connecting...</span>
+            </div>
+            <i class="ph ph-gear hover:text-white cursor-pointer text-lg"></i>
         </div>
     </aside>
 
-    <!-- Main Chat Area -->
-    <main class="flex-1 flex flex-col h-full relative">
+    <!-- Main Chat Content -->
+    <main class="flex-1 flex flex-col h-full relative w-full max-w-full">
         <!-- Mobile Header -->
-        <header class="md:hidden glass-panel p-4 flex justify-between items-center border-b z-10">
-            <h1 class="text-lg font-bold">ApexNet</h1>
-            <button onclick="document.querySelector('aside').classList.toggle('hidden')" class="text-white"><i class="fas fa-bars"></i></button>
+        <header class="md:hidden flex items-center justify-between p-3 border-b border-white/10 bg-gray900 text-white">
+            <button onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="ph ph-list text-2xl"></i></button>
+            <h1 class="font-medium text-sm">ApexNet</h1>
+            <i class="ph ph-plus text-xl cursor-pointer" onclick="createNewChat()"></i>
         </header>
 
-        <!-- Chat Output -->
-        <div id="chatBox" class="chat-container p-4 md:p-8 flex flex-col gap-6 w-full max-w-4xl mx-auto">
-            <div class="text-center text-gray-500 mt-10">
-                <i class="fas fa-robot text-4xl mb-3 text-blue-500 opacity-50"></i>
-                <h2 class="text-xl font-semibold text-gray-300">Welcome to ApexNet Elite</h2>
-                <p class="text-sm mt-2">Server auto-patching in background...</p>
+        <!-- Chat Output Area -->
+        <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-6 pb-32">
+            <!-- Welcome Screen -->
+            <div class="h-full flex flex-col items-center justify-center text-center px-4" id="welcomeScreen">
+                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                    <i class="ph ph-terminal-window text-3xl text-gray-300"></i>
+                </div>
+                <h2 class="text-2xl font-semibold mb-2">ApexNet 7.6B Engine</h2>
+                <p class="text-gray-400 text-sm max-w-md">System is fetching the live API endpoint from your GitHub Gist. Please wait while the connection is established.</p>
             </div>
         </div>
 
-        <!-- Input Area -->
-        <div class="p-4 w-full max-w-4xl mx-auto absolute bottom-0 left-0 right-0">
-            <div class="glass-panel p-2 rounded-2xl flex items-end gap-2 shadow-2xl">
-                <textarea id="userInput" rows="1" class="w-full bg-transparent text-white p-3 focus:outline-none resize-none max-h-32" placeholder="Send a message to ApexNet..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-                <button id="sendBtn" onclick="handleSend()" class="bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-xl transition-all duration-200 mb-1">
-                    <i class="fas fa-paper-plane"></i>
+        <!-- Input Area (Fixed Bottom) -->
+        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-gray800 via-gray800 to-transparent pt-6 pb-6 px-4 md:px-8">
+            <div class="max-w-3xl mx-auto relative flex items-end bg-gray700 border border-white/10 rounded-xl overflow-hidden shadow-2xl focus-within:border-gray-500 transition-colors">
+                <textarea id="userInput" rows="1" class="w-full max-h-[200px] bg-transparent py-4 pl-4 pr-12 text-sm text-gray-100 placeholder-gray-400" placeholder="Message ApexNet..."></textarea>
+                <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="ph ph-paper-plane-right text-lg"></i>
                 </button>
+            </div>
+            <div class="text-center mt-2 text-[10px] text-gray-500">
+                ApexNet can make mistakes. Verify critical code on your POCO F4 environment.
             </div>
         </div>
     </main>
 
     <script>
-        // --- 1. CORE SYSTEM VARIABLES ---
-        const KVDB_URL = "https://kvdb.io/J1ibE3hFShkohLKyCTRmbT/colab_link";
+        // ==========================================
+        // 🛠️ BACKEND LOGIC (Injected into UI)
+        // ==========================================
+        
+        // ⚠️ Apna Raw Gist Link yahan confirm kar lena
+        const GIST_URL = "https://gist.githubusercontent.com/PandeyJI-9/6b0c7fa3c4ed32c7d6da9681876fb80f/raw/colab_link.txt";
         let COLAB_URL = "";
         let AUTH_TOKEN = "";
         const USERNAME = "Ayushpandey_Boss";
         const PASSWORD = "123456789@1234";
         
         let currentChatId = null;
-        let chats = JSON.parse(localStorage.getItem('apex_chats')) || [];
+        let chats = JSON.parse(localStorage.getItem('apex_chats_pro')) || [];
 
-        // --- 2. AUTO-PATCHER & LOGIN SYSTEM ---
+        // 1. Boot Sequence & Auto-Patch
         async function initSystem() {
             try {
-                // Fetch dynamic URL
-                document.getElementById('serverStatus').innerHTML = '<i class="fas fa-circle text-[8px]"></i> Patching...';
-                const linkRes = await fetch(KVDB_URL);
+                const cacheBuster = new Date().getTime(); 
+                const linkRes = await fetch(`${GIST_URL}?t=${cacheBuster}`);
                 COLAB_URL = (await linkRes.text()).trim().replace(/\/$/, "");
-                console.log("🔗 Live URL:", COLAB_URL);
+                console.log("🔗 Target Locked:", COLAB_URL);
 
-                // Auto Login
                 const loginRes = await fetch(`${COLAB_URL}/v1/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -138,84 +141,90 @@
                 if (loginRes.ok) {
                     const data = await loginRes.json();
                     AUTH_TOKEN = data.token;
-                    document.getElementById('serverStatus').innerHTML = '<i class="fas fa-circle text-[8px] text-green-400"></i> Online';
-                    document.getElementById('serverStatus').className = "text-green-400 flex items-center gap-1";
+                    document.getElementById('serverStatus').innerText = 'System Online';
+                    document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500';
+                    document.getElementById('welcomeScreen').innerHTML = `
+                        <div class="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-6">
+                            <i class="ph ph-check text-3xl text-blue-500"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold mb-2">System Ready</h2>
+                        <p class="text-gray-400 text-sm">Gist URL patched successfully. Secure connection established.</p>
+                    `;
                 } else {
-                    document.getElementById('serverStatus').innerHTML = '<i class="fas fa-circle text-[8px] text-red-500"></i> Auth Failed';
+                    throw new Error("Auth Failed");
                 }
             } catch (err) {
                 console.error("System Init Error:", err);
-                document.getElementById('serverStatus').innerHTML = '<i class="fas fa-circle text-[8px] text-red-500"></i> Offline';
+                document.getElementById('serverStatus').innerText = 'Offline';
+                document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-red-500';
             }
         }
 
-        // --- 3. CHAT HISTORY (Bug Fixed!) ---
-        function saveChats() {
-            localStorage.setItem('apex_chats', JSON.stringify(chats));
-            renderHistory();
-        }
-
+        // 2. Chat UI Logic
         function createNewChat() {
             currentChatId = Date.now().toString();
-            chats.unshift({ id: currentChatId, title: "New Chat", messages: [] });
+            chats.unshift({ id: currentChatId, title: "New Conversation", messages: [] });
             saveChats();
-            document.getElementById('chatBox').innerHTML = ''; // Clear UI
+            document.getElementById('chatBox').innerHTML = ''; 
         }
 
         function loadChat(id) {
             currentChatId = id;
             const chat = chats.find(c => c.id === id);
             document.getElementById('chatBox').innerHTML = '';
-            if (chat) {
-                chat.messages.forEach(msg => appendMessage(msg.role, msg.content, false));
-            }
+            if (chat) chat.messages.forEach(msg => appendMessage(msg.role, msg.content, false));
+        }
+
+        function saveChats() {
+            localStorage.setItem('apex_chats_pro', JSON.stringify(chats));
+            renderHistory();
         }
 
         function renderHistory() {
             const list = document.getElementById('historyList');
             list.innerHTML = '';
             chats.forEach(chat => {
+                const isActive = chat.id === currentChatId;
                 list.innerHTML += `
-                    <div onclick="loadChat('${chat.id}')" class="p-3 rounded-lg cursor-pointer transition-all hover:bg-white/10 ${chat.id === currentChatId ? 'bg-white/10 border-l-2 border-blue-500' : ''}">
-                        <div class="truncate text-sm text-gray-200"><i class="far fa-comment-alt mr-2 text-gray-500"></i> ${chat.title}</div>
-                    </div>
+                    <button onclick="loadChat('${chat.id}')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-md ${isActive ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5'} transition-colors text-sm truncate">
+                        <i class="ph ph-chat-teardrop text-lg flex-shrink-0"></i>
+                        <span class="truncate">${chat.title}</span>
+                    </button>
                 `;
             });
         }
 
-        // --- 4. MESSAGE RENDERING ---
+        // 3. Message Rendering & Syntax Highlighting
         function appendMessage(role, text, save = true) {
             const chatBox = document.getElementById('chatBox');
-            // Remove welcome screen if present
-            if (chatBox.innerHTML.includes('Welcome to ApexNet')) chatBox.innerHTML = '';
+            if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
 
             const isUser = role === 'user';
-            
-            // Format AI response with Markdown and Syntax Highlighting
             let formattedText = isUser ? text : marked.parse(text);
             
             const msgDiv = document.createElement('div');
-            msgDiv.className = `flex w-full ${isUser ? 'justify-end' : 'justify-start'}`;
+            msgDiv.className = `w-full flex justify-center py-6 ${isUser ? 'bg-transparent' : 'bg-gray800 border-y border-white/5'}`;
+            
             msgDiv.innerHTML = `
-                <div class="max-w-[85%] p-4 ${isUser ? 'message-user text-white' : 'message-ai text-gray-200'}">
-                    <div class="prose prose-invert max-w-none text-sm md:text-base leading-relaxed">
+                <div class="max-w-3xl w-full px-4 flex gap-4 md:gap-6">
+                    <div class="w-8 h-8 rounded-sm flex-shrink-0 flex items-center justify-center ${isUser ? 'bg-blue-600' : 'bg-green-600'}">
+                        <i class="${isUser ? 'ph ph-user' : 'ph ph-robot'} text-white"></i>
+                    </div>
+                    <div class="prose prose-invert max-w-none text-sm md:text-base text-gray-200 w-full overflow-hidden">
                         ${formattedText}
                     </div>
                 </div>
             `;
             chatBox.appendChild(msgDiv);
             
-            // Apply syntax highlighting to new code blocks
+            // Apply highlight.js to new code blocks
             document.querySelectorAll('pre code').forEach((el) => { hljs.highlightElement(el); });
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Save to history
             if (save && currentChatId) {
                 const chat = chats.find(c => c.id === currentChatId);
                 if (chat) {
-                    if (chat.messages.length === 0 && isUser) {
-                        chat.title = text.substring(0, 25) + "..."; // Auto title
-                    }
+                    if (chat.messages.length === 0 && isUser) chat.title = text.substring(0, 30) + "...";
                     chat.messages.push({ role, content: text });
                     saveChats();
                 }
@@ -226,22 +235,20 @@
             const chatBox = document.getElementById('chatBox');
             const typingDiv = document.createElement('div');
             typingDiv.id = 'typingIndicator';
-            typingDiv.className = 'flex w-full justify-start';
+            typingDiv.className = 'w-full flex justify-center py-6 bg-gray800 border-y border-white/5';
             typingDiv.innerHTML = `
-                <div class="max-w-[85%] p-4 message-ai text-gray-200">
-                    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <div class="max-w-3xl w-full px-4 flex gap-4 md:gap-6">
+                    <div class="w-8 h-8 rounded-sm flex-shrink-0 flex items-center justify-center bg-green-600">
+                        <i class="ph ph-robot text-white"></i>
+                    </div>
+                    <div class="typing-loader"><span></span><span></span><span></span></div>
                 </div>
             `;
             chatBox.appendChild(typingDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        function hideTyping() {
-            const el = document.getElementById('typingIndicator');
-            if (el) el.remove();
-        }
-
-        // --- 5. NETWORK COMMUNICATION ---
+        // 4. API Communication
         async function handleSend() {
             const input = document.getElementById('userInput');
             const text = input.value.trim();
@@ -250,53 +257,49 @@
             if (!currentChatId) createNewChat();
 
             appendMessage('user', text);
-            input.value = '';
-            input.style.height = 'auto'; // Reset textarea height
+            input.value = ''; input.style.height = 'auto';
             showTyping();
 
             if (!AUTH_TOKEN) {
-                hideTyping();
-                appendMessage('ai', "⚠️ Error: Backend se connect nahi ho paya. Refresh karo ya Colab check karo.");
+                document.getElementById('typingIndicator').remove();
+                appendMessage('ai', "⚠️ Backend connection missing. Please ensure Colab is running.");
                 return;
             }
 
             try {
                 const res = await fetch(`${COLAB_URL}/v1/chat`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${AUTH_TOKEN}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
                     body: JSON.stringify({ message: text })
                 });
 
-                hideTyping();
+                document.getElementById('typingIndicator').remove();
                 if (res.ok) {
                     const data = await res.json();
                     appendMessage('ai', data.reply);
                 } else {
-                    appendMessage('ai', `⚠️ Server Error: ${res.status}`);
+                    appendMessage('ai', `⚠️ HTTP Error: ${res.status}`);
                 }
             } catch (err) {
-                hideTyping();
-                appendMessage('ai', `🚨 Network Crash! Cloudflare link block ho gaya ya Colab band hai.\n\nError: ${err.message}`);
+                document.getElementById('typingIndicator').remove();
+                appendMessage('ai', `🚨 Tunnel disconnected. Is your Colab session still active?`);
             }
         }
 
-        // Handle Enter key (Shift+Enter for new line)
-        document.getElementById('userInput').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-            }
+        // Input Auto-resize & Enter Key
+        const input = document.getElementById('userInput');
+        input.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
         });
 
-        // --- 6. BOOT SEQUENCE ---
+        // Initialize
         if (chats.length === 0) createNewChat();
         else loadChat(chats[0].id);
         renderHistory();
-        
-        // Start booting
         initSystem();
 
     </script>
