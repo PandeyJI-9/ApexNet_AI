@@ -4,53 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ApexNet | Elite Neural Console</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { 
-            darkMode: 'class', 
-            theme: { 
-                extend: { 
-                    colors: { 
-                        apexDark: '#0b0f19', 
-                        apexCard: '#111827', 
-                        apexHover: '#1f2937',
-                        apexAccent: '#3b82f6'
-                    } 
-                } 
-            } 
-        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { apexDark: '#0b0f19', apexCard: '#111827', apexHover: '#1f2937', apexAccent: '#3b82f6' } } } }
     </script>
-    <!-- Marked & Highlight.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
     <style>
         body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; height: 100dvh; display: flex; overflow: hidden; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
-        
-        /* Markdown Pro Styling */
         .prose pre { background: #030712 !important; border: 1px solid #1f2937; border-radius: 0.75rem; padding: 1rem; margin-top: 0.75rem; overflow-x: auto; }
         .prose code { font-family: 'Fira Code', monospace; font-size: 0.875rem; color: #60a5fa; }
         .prose p { margin-bottom: 0.85rem; line-height: 1.6; }
         .prose ul, .prose ol { margin-left: 1.25rem; margin-bottom: 0.85rem; }
-        
         textarea { resize: none; overflow-y: hidden; }
         textarea:focus { outline: none; }
-
-        /* Glowing Animation */
         @keyframes apexGlow { 0% { opacity: 0.3; } 50% { opacity: 1; text-shadow: 0 0 12px #3b82f6; } 100% { opacity: 0.3; } }
         .apex-glow { animation: apexGlow 2s infinite ease-in-out; }
     </style>
 </head>
 <body class="bg-apexDark text-gray-100 flex h-[100dvh] w-full selection:bg-blue-500/30 relative">
 
-    <!-- 🔐 LOGIN / SIGNUP MODAL -->
+    <!-- 🔐 LOGIN MODAL -->
     <div id="authModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-apexCard border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl space-y-6">
             <div class="text-center">
@@ -75,9 +54,7 @@
     <!-- Sidebar -->
     <aside class="w-[280px] bg-apexCard flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5 shadow-xl">
         <div class="p-4">
-            <button onclick="createNewChat()" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 transition-all text-sm font-semibold shadow-lg shadow-blue-600/20 text-white">
-                <i class="ph ph-plus text-lg"></i> New Conversation
-            </button>
+            <button onclick="createNewChat()" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 transition-all text-sm font-semibold shadow-lg shadow-blue-600/20 text-white"><i class="ph ph-plus text-lg"></i> New Conversation</button>
         </div>
         <div class="flex-1 overflow-y-auto px-3 space-y-1.5" id="historyList"></div>
         <div class="p-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400 bg-[#0b0f19]/40">
@@ -91,7 +68,6 @@
 
     <!-- Main Chat Content -->
     <main class="flex-1 flex flex-col h-full w-full overflow-hidden relative bg-apexDark">
-        <!-- Mobile Header -->
         <header class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-apexCard text-white flex-shrink-0 shadow-md">
             <button onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="ph ph-list text-2xl"></i></button>
             <h1 class="font-bold text-sm flex items-center gap-2"><i class="ph ph-cpu text-blue-500"></i> ApexNet God-Mode</h1>
@@ -101,7 +77,6 @@
             </div>
         </header>
 
-        <!-- Chat Container (Optimized for gorgeous left/right chat bubbles) -->
         <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-4xl mx-auto flex flex-col gap-6">
             <div class="h-full flex flex-col items-center justify-center text-center px-4" id="welcomeScreen">
                 <div class="w-20 h-20 bg-blue-600/10 border border-blue-500/20 rounded-3xl flex items-center justify-center mb-5 apex-glow shadow-2xl">
@@ -112,31 +87,37 @@
             </div>
         </div>
 
-        <!-- Floating Input Area -->
         <div class="flex-shrink-0 w-full bg-gradient-to-t from-apexDark via-apexDark to-transparent pb-6 pt-2 px-4 md:px-8">
             <div class="max-w-3xl mx-auto relative flex items-end bg-apexCard border border-white/10 rounded-2xl overflow-hidden shadow-2xl focus-within:border-blue-500/60 transition-all p-2">
                 <textarea id="userInput" rows="1" class="w-full max-h-[160px] bg-transparent py-3 pl-3 pr-12 text-sm md:text-base text-gray-100 placeholder-gray-500" placeholder="Ask anything (Coding, JEE, LSPosed)..."></textarea>
-                <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-lg shadow-blue-600/30">
-                    <i class="ph ph-paper-plane-right text-lg font-bold"></i>
-                </button>
+                <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-lg shadow-blue-600/30"><i class="ph ph-paper-plane-right text-lg font-bold"></i></button>
             </div>
-            <div class="text-center mt-2 text-[11px] text-gray-500 font-medium">ApexNet Enterprise v4.0 • Left/Right Clean Alignment UI</div>
+            <div class="text-center mt-2 text-[11px] text-gray-500 font-medium">ApexNet Enterprise v4.1 • Anti-Timeout Cloudflare Bypass</div>
         </div>
     </main>
 
     <script>
-        const GIST_URL = "https://gist.githubusercontent.com/PandeyJI-9/6b0c7fa3c4ed32c7d6da9681876fb80f/raw/colab_link.txt";
+        // 🔥 FIX 1: GITHUB CORE API INSTEAD OF CDN CACHE
+        const GIST_API = "https://api.github.com/gists/6b0c7fa3c4ed32c7d6da9681876fb80f";
         let COLAB_URL = "";
         let AUTH_TOKEN = localStorage.getItem('apex_token') || "";
         let currentMode = 'login';
         let currentChatId = null;
         let chats = [];
 
+        // 🔥 FIX 2: UNIVERSAL CLOUDFLARE BYPASS HEADER
+        const secureHeaders = (isAuth = true) => {
+            const h = { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' };
+            if (isAuth && AUTH_TOKEN) h['Authorization'] = `Bearer ${AUTH_TOKEN}`;
+            return h;
+        };
+
         async function initSystem() {
             try {
-                const cacheBuster = new Date().getTime(); 
-                const linkRes = await fetch(`${GIST_URL}?t=${cacheBuster}`);
-                COLAB_URL = (await linkRes.text()).trim().replace(/\/$/, "");
+                // Fetch directly from API to avoid CDN delay
+                const linkRes = await fetch(`${GIST_API}?t=${new Date().getTime()}`);
+                const gistData = await linkRes.json();
+                COLAB_URL = gistData.files["colab_link.txt"].content.trim().replace(/\/$/, "");
                 
                 document.getElementById('serverStatus').innerText = 'Cluster Online';
                 document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500';
@@ -154,9 +135,7 @@
 
         async function fetchCloudChats() {
             try {
-                const res = await fetch(`${COLAB_URL}/v1/chats`, {
-                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
-                });
+                const res = await fetch(`${COLAB_URL}/v1/chats`, { headers: secureHeaders() });
                 if (res.ok) {
                     const data = await res.json();
                     chats = data.chats || [];
@@ -168,13 +147,8 @@
         }
 
         async function saveCloudChat(chat) {
-            try {
-                await fetch(`${COLAB_URL}/v1/chats/save`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
-                    body: JSON.stringify(chat)
-                });
-            } catch (e) { console.error("Cloud save failed", e); }
+            try { await fetch(`${COLAB_URL}/v1/chats/save`, { method: 'POST', headers: secureHeaders(), body: JSON.stringify(chat) }); } 
+            catch (e) {}
         }
 
         function switchTab(mode) {
@@ -197,7 +171,7 @@
                 let endpoint = currentMode === 'login' ? '/v1/auth/login' : '/v1/auth/signup';
                 let payload = currentMode === 'login' ? { username, password } : { username, password, activation_key: key };
 
-                const res = await fetch(`${COLAB_URL}${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const res = await fetch(`${COLAB_URL}${endpoint}`, { method: 'POST', headers: secureHeaders(false), body: JSON.stringify(payload) });
 
                 if (res.ok) {
                     const data = await res.json();
@@ -246,7 +220,6 @@
             });
         }
 
-        // 🔥 CRITICAL FIX: Stunning Left/Right Message Alignment UI
         function appendMessageUI(role, text) {
             const chatBox = document.getElementById('chatBox');
             if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
@@ -256,10 +229,7 @@
             msgRow.className = `w-full flex my-3 px-2 md:px-4 ${isUser ? 'justify-end' : 'justify-start'}`;
 
             if (isUser) {
-                msgRow.innerHTML = `
-                    <div class="max-w-[85%] md:max-w-[70%] bg-blue-600 text-white px-5 py-3.5 rounded-2xl rounded-tr-sm shadow-lg text-sm md:text-base leading-relaxed break-words">
-                        ${text}
-                    </div>`;
+                msgRow.innerHTML = `<div class="max-w-[85%] md:max-w-[70%] bg-blue-600 text-white px-5 py-3.5 rounded-2xl rounded-tr-sm shadow-lg text-sm md:text-base leading-relaxed break-words">${text}</div>`;
             } else {
                 msgRow.innerHTML = `
                     <div class="max-w-[90%] md:max-w-[80%] flex gap-3.5 items-start bg-apexCard border border-white/5 px-4 md:px-6 py-4 rounded-2xl rounded-tl-sm shadow-xl text-sm md:text-base text-gray-200">
@@ -272,7 +242,6 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // 🔥 STREAMING HANDLER WITH LEFT ALIGNMENT & TYPEWRITER EFFECT
         async function handleSend() {
             const input = document.getElementById('userInput');
             const text = input.value.trim();
@@ -308,9 +277,10 @@
             let fullReply = "";
 
             try {
+                // 🔥 THE FIX: Using secureHeaders which includes Bypass-Tunnel-Reminder
                 const response = await fetch(`${COLAB_URL}/v1/chat`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+                    headers: secureHeaders(),
                     body: JSON.stringify(chat)
                 });
 
@@ -349,7 +319,7 @@
                 await saveCloudChat(chat);
 
             } catch (err) {
-                contentElem.innerHTML = "🚨 Neural Cluster disconnected. Verify Colab execution.";
+                contentElem.innerHTML = "🚨 Neural Cluster disconnected. Cloudflare/Colab Tunnel Error.";
             }
         }
 
