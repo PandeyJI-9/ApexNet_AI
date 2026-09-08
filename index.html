@@ -29,7 +29,7 @@
 </head>
 <body class="matrix-bg text-gray-100 flex h-[100dvh] w-full selection:bg-blue-600/30 relative">
 
-    <!-- 🔐 RESTRICTED LOGIN MODAL (Aura Farming Edition) -->
+    <!-- 🔐 RESTRICTED LOGIN MODAL -->
     <div id="authModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-apexCard border border-blue-500/20 w-full max-w-md rounded-2xl p-8 shadow-[0_0_50px_-12px_rgba(37,99,235,0.25)] space-y-6 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
@@ -80,15 +80,28 @@
         </header>
 
         <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-5xl mx-auto flex flex-col gap-6 scroll-smooth">
-            <!-- Welcome Screen by Default -->
+            <!-- Welcome Screen -->
         </div>
 
+        <!-- 🧠 Floating Input Area (v5.0 Dual-Brain UI) -->
         <div class="flex-shrink-0 w-full bg-gradient-to-t from-[#070a10] via-[#070a10] to-transparent pb-6 pt-4 px-4 md:px-8">
-            <div class="max-w-4xl mx-auto relative flex items-end bg-apexHover border border-white/10 rounded-2xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] focus-within:border-blue-500/50 transition-all p-1.5">
-                <textarea id="userInput" rows="1" class="w-full max-h-[200px] bg-transparent py-3.5 pl-4 pr-14 text-sm md:text-base text-gray-100 placeholder-gray-500" placeholder="Execute command..."></textarea>
-                <button id="sendBtn" onclick="handleSend()" class="absolute right-2 bottom-2 p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]"><i class="ph ph-paper-plane-tilt text-xl font-bold"></i></button>
+            <div class="max-w-4xl mx-auto relative flex flex-col bg-apexHover border border-white/10 rounded-2xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] focus-within:border-blue-500/50 transition-all">
+                
+                <!-- DeepThink Toggle Bar -->
+                <div class="flex items-center gap-3 px-4 pt-3 pb-1">
+                    <button id="deepThinkBtn" onclick="toggleDeepThink()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 text-gray-400 bg-black/20 hover:bg-black/40 transition-all">
+                        <i class="ph ph-brain text-sm"></i> <span id="deepThinkText">Deep Think: OFF</span>
+                    </button>
+                    <div id="deepThinkIndicator" class="hidden h-1.5 w-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse"></div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="relative flex items-end p-1.5 w-full">
+                    <textarea id="userInput" rows="1" class="w-full max-h-[200px] bg-transparent py-2.5 pl-3 pr-14 text-sm md:text-base text-gray-100 placeholder-gray-500" placeholder="Execute command or ask for code..."></textarea>
+                    <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]"><i class="ph ph-paper-plane-tilt text-xl font-bold"></i></button>
+                </div>
             </div>
-            <div class="text-center mt-3 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Engineered by Ayush • ApexNet God-Mode Engine</div>
+            <div class="text-center mt-3 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Engineered by Ayush • ApexNet v5.0 Master Engine</div>
         </div>
     </main>
 
@@ -100,6 +113,26 @@
         let currentChatId = null;
         let chats = [];
         let isGenerating = false; 
+        
+        // 🔥 The DeepThink Logic
+        let isDeepThinkEnabled = false;
+
+        function toggleDeepThink() {
+            isDeepThinkEnabled = !isDeepThinkEnabled;
+            const btn = document.getElementById('deepThinkBtn');
+            const text = document.getElementById('deepThinkText');
+            const indicator = document.getElementById('deepThinkIndicator');
+            
+            if (isDeepThinkEnabled) {
+                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/50 text-blue-400 bg-blue-900/20 transition-all shadow-[0_0_15px_rgba(37,99,235,0.2)]";
+                text.innerText = "Deep Think: ON";
+                indicator.classList.remove('hidden');
+            } else {
+                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 text-gray-400 bg-black/20 hover:bg-black/40 transition-all";
+                text.innerText = "Deep Think: OFF";
+                indicator.classList.add('hidden');
+            }
+        }
 
         const secureHeaders = (isAuth = true) => {
             const h = { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' };
@@ -117,7 +150,7 @@
                 <h2 class="text-4xl font-black tracking-tighter mb-3 bg-gradient-to-br from-white via-blue-200 to-blue-600 bg-clip-text text-transparent uppercase">Terminal Access Granted</h2>
                 <div class="flex gap-2 mb-4">
                     <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-900/30 border border-blue-500/20 rounded-md">God-Mode Active</span>
-                    <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-400 bg-green-900/30 border border-green-500/20 rounded-md">Live Research</span>
+                    <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-400 bg-green-900/30 border border-green-500/20 rounded-md">Web Client</span>
                 </div>
                 <p class="text-gray-400 text-sm max-w-md leading-relaxed">Neural Engine synchronized. Awaiting elite execution commands.</p>
             </div>`;
@@ -290,10 +323,17 @@
 
             const aiRow = document.createElement('div');
             aiRow.className = `w-full flex my-4 px-2 md:px-4 justify-start`;
+            
+            // Adding a glowing brain icon if Deep Think is enabled for this generation
+            const iconHTML = isDeepThinkEnabled 
+                ? '<i class="ph ph-brain text-xl text-purple-400 animate-pulse"></i>' 
+                : '<i class="ph ph-cpu text-xl text-blue-400"></i>';
+            const bgClass = isDeepThinkEnabled ? 'bg-purple-900/30 border-purple-500/40' : 'bg-blue-900/30 border-blue-500/40';
+
             aiRow.innerHTML = `
                 <div class="max-w-[95%] md:max-w-[85%] flex gap-4 items-start bg-apexHover border border-blue-500/20 px-5 md:px-6 py-5 rounded-2xl rounded-tl-sm shadow-[0_0_30px_-5px_rgba(37,99,235,0.15)] text-sm md:text-base text-gray-200 w-full relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 shadow-[0_0_15px_#3b82f6]"></div>
-                    <div class="w-9 h-9 rounded-xl bg-blue-900/30 border border-blue-500/40 flex-shrink-0 flex items-center justify-center text-blue-400 shadow-sm mt-0.5 apex-glow"><i class="ph ph-cpu text-xl"></i></div>
+                    <div class="w-9 h-9 rounded-xl ${bgClass} border flex-shrink-0 flex items-center justify-center shadow-sm mt-0.5 apex-glow">${iconHTML}</div>
                     <div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose font-medium" id="${uniqueStreamId}"><span class="inline-block w-2.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle shadow-[0_0_8px_#60a5fa]"></span></div>
                 </div>`;
             chatBox.appendChild(aiRow);
@@ -302,11 +342,20 @@
             const contentElem = document.getElementById(uniqueStreamId);
             let fullReply = "";
 
+            // 🔥 The Master v5.0 Payload Data
+            const payloadData = {
+                id: chat.id,
+                title: chat.title,
+                messages: chat.messages,
+                client: "web",                    // Explicitly tells backend this is Web UI
+                deep_think: isDeepThinkEnabled    // Triggers OpenRouter API if true
+            };
+
             try {
                 const response = await fetch(`${COLAB_URL}/v1/chat`, {
                     method: 'POST',
                     headers: secureHeaders(),
-                    body: JSON.stringify(chat)
+                    body: JSON.stringify(payloadData)
                 });
 
                 if (!response.ok) throw new Error("Stream failed");
