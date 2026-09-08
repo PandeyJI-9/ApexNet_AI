@@ -37,7 +37,7 @@
                 <div class="inline-flex p-3 bg-blue-900/20 rounded-xl text-blue-500 mb-4 border border-blue-500/30 shadow-[0_0_15px_rgba(37,99,235,0.2)]"><i class="ph ph-fingerprint text-4xl"></i></div>
                 <h2 class="text-2xl font-extrabold tracking-tight text-white">Classified Access</h2>
                 <p class="text-xs text-red-400 mt-2 font-medium tracking-wide uppercase">🚨 Unauthorized access prohibited 🚨</p>
-                <p class="text-[11px] text-gray-400 mt-1">For login credentials, you need to contact Ayush.</p>
+                <p class="text-[11px] text-gray-400 mt-1">Colab restarted? Use Request Access.</p>
             </div>
             <div class="flex bg-[#070a10] p-1 rounded-lg border border-white/5 text-xs font-semibold uppercase tracking-wider">
                 <button onclick="switchTab('login')" id="tabLogin" class="flex-1 py-2.5 rounded-md bg-blue-600 text-white transition-all shadow-md">Login</button>
@@ -46,9 +46,20 @@
             <div class="space-y-4">
                 <div><label class="text-xs text-gray-400 block mb-1 font-semibold uppercase">Identity String</label><input type="text" id="authUsername" placeholder="e.g., Ayush_GodMode" class="w-full bg-[#070a10] border border-white/10 rounded-lg px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors"></div>
                 <div><label class="text-xs text-gray-400 block mb-1 font-semibold uppercase">Security Cipher</label><input type="password" id="authPassword" placeholder="••••••••••••" class="w-full bg-[#070a10] border border-white/10 rounded-lg px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors"></div>
-                <div id="signupKeyBox" class="hidden"><label class="text-xs text-gray-400 block mb-1 font-semibold uppercase">Clearance Key</label><input type="text" id="authKey" placeholder="Contact Ayush for your key" class="w-full bg-[#070a10] border border-white/10 rounded-lg px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-600"></div>
+                <div id="signupKeyBox" class="hidden"><label class="text-xs text-gray-400 block mb-1 font-semibold uppercase">Clearance Key</label><input type="text" id="authKey" placeholder="APEX-ADMIN-9999" class="w-full bg-[#070a10] border border-white/10 rounded-lg px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-600"></div>
+                
                 <p id="authError" class="text-xs text-red-500 text-center hidden font-bold bg-red-500/10 py-2 rounded-md border border-red-500/20"></p>
+                
                 <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-3 rounded-lg transition-all text-xs shadow-[0_0_20px_rgba(37,99,235,0.4)]">Establish Connection</button>
+
+                <!-- 🔥 HACKER OVERRIDE: MANUAL URL INJECTION -->
+                <button onclick="document.getElementById('manualUrlBox').classList.toggle('hidden')" class="text-[10px] text-gray-500 hover:text-white mt-4 underline decoration-dashed w-full text-center tracking-wider uppercase">Server Offline? Manual Override</button>
+                <div id="manualUrlBox" class="mt-2 pt-4 border-t border-white/10 hidden">
+                    <label class="text-[10px] text-gray-400 block mb-1 font-semibold uppercase tracking-widest">Colab Cloudflare URL</label>
+                    <input type="text" id="manualUrl" placeholder="https://...trycloudflare.com" class="w-full bg-[#070a10] border border-white/10 rounded-lg px-3 py-2 text-xs text-blue-100 focus:outline-none focus:border-blue-500 transition-colors">
+                    <button onclick="setManualUrl()" class="w-full mt-2 bg-gray-800 hover:bg-gray-700 text-white font-bold uppercase py-2 rounded-lg transition-all text-[10px] border border-white/10 tracking-widest">Force Connect</button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -101,21 +112,35 @@
                     <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]"><i class="ph ph-paper-plane-tilt text-xl font-bold"></i></button>
                 </div>
             </div>
-            <div class="text-center mt-3 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Engineered by Ayush • ApexNet v5.0 Master Engine</div>
+            <div class="text-center mt-3 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Engineered by Ayush • ApexNet v5.4 Master Engine</div>
         </div>
     </main>
 
     <script>
-        const GIST_API = "https://api.github.com/gists/6b0c7fa3c4ed32c7d6da9681876fb80f";
+        // 🔥 Rate Limit Bypasser (Raw URL instead of API)
+        const GIST_URL = "https://gist.githubusercontent.com/PandeyJI-9/6b0c7fa3c4ed32c7d6da9681876fb80f/raw/colab_link.txt";
         let COLAB_URL = "";
         let AUTH_TOKEN = localStorage.getItem('apex_token') || "";
         let currentMode = 'login';
         let currentChatId = null;
         let chats = [];
         let isGenerating = false; 
-        
-        // 🔥 The DeepThink Logic
         let isDeepThinkEnabled = false;
+
+        function setManualUrl() {
+            const mUrl = document.getElementById('manualUrl').value.trim();
+            if (mUrl.startsWith("http")) {
+                COLAB_URL = mUrl.replace(/\/$/, "");
+                document.getElementById('serverStatus').innerText = 'Cluster Active (Manual)';
+                document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]';
+                document.getElementById('manualUrlBox').classList.add('hidden');
+                
+                const errBox = document.getElementById('authError');
+                errBox.innerText = "System Overridden. Proceed to Auth.";
+                errBox.classList.remove('hidden');
+                errBox.className = "text-xs text-green-500 text-center font-bold bg-green-500/10 py-2 rounded-md border border-green-500/20";
+            }
+        }
 
         function toggleDeepThink() {
             isDeepThinkEnabled = !isDeepThinkEnabled;
@@ -159,9 +184,14 @@
         async function initSystem() {
             document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); 
             try {
-                const linkRes = await fetch(`${GIST_API}?t=${new Date().getTime()}`);
-                const gistData = await linkRes.json();
-                COLAB_URL = gistData.files["colab_link.txt"].content.trim().replace(/\/$/, "");
+                // Using raw gist URL to prevent GitHub Rate Limiting Ban
+                const linkRes = await fetch(`${GIST_URL}?t=${new Date().getTime()}`);
+                if (!linkRes.ok) throw new Error("Gist Fetch Blocked");
+                
+                const text = await linkRes.text();
+                COLAB_URL = text.trim().replace(/\/$/, "");
+                
+                if (!COLAB_URL.startsWith("http")) throw new Error("Invalid URL");
                 
                 document.getElementById('serverStatus').innerText = 'Cluster Active';
                 document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]';
@@ -171,11 +201,13 @@
             } catch (err) {
                 document.getElementById('serverStatus').innerText = 'Cluster Offline';
                 document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]';
+                document.getElementById('authModal').classList.remove('hidden');
             }
         }
 
         async function fetchCloudChats() {
             try {
+                if (!COLAB_URL) throw new Error("Missing URL");
                 const res = await fetch(`${COLAB_URL}/v1/chats`, { headers: secureHeaders() });
                 if (res.ok) {
                     const data = await res.json();
@@ -206,9 +238,15 @@
             const key = document.getElementById('authKey').value.trim();
             const errBox = document.getElementById('authError');
 
-            if (!username || !password) {
+            if (!COLAB_URL) {
+                errBox.innerText = "Error: Cluster URL Missing. Use Manual Override below.";
                 errBox.classList.remove('hidden');
+                return;
+            }
+
+            if (!username || !password) {
                 errBox.innerText = "Error: Authentication parameters missing.";
+                errBox.classList.remove('hidden');
                 return;
             }
 
@@ -227,7 +265,15 @@
                     await fetchCloudChats();
                 } else {
                     const errData = await res.json();
-                    errBox.innerText = `Access Denied: ${errData.detail || 'Invalid Credentials'}. Contact Ayush for access.`;
+                    let errMsg = errData.detail || 'Invalid Credentials';
+                    
+                    // 🔥 DB WIPE FIX: Automatically tell user to signup
+                    if (res.status === 404 && currentMode === 'login') {
+                        errMsg = "Database Wiped on Colab restart! Use 'Request Access' (Signup) instead.";
+                    }
+                    
+                    errBox.innerText = `Access Denied: ${errMsg}`;
+                    errBox.className = "text-xs text-red-500 text-center font-bold bg-red-500/10 py-2 rounded-md border border-red-500/20";
                     errBox.classList.remove('hidden');
                 }
             } catch (err) {
@@ -320,11 +366,9 @@
             if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
 
             const uniqueStreamId = 'stream_' + Date.now();
-
             const aiRow = document.createElement('div');
             aiRow.className = `w-full flex my-4 px-2 md:px-4 justify-start`;
             
-            // Adding a glowing brain icon if Deep Think is enabled for this generation
             const iconHTML = isDeepThinkEnabled 
                 ? '<i class="ph ph-brain text-xl text-purple-400 animate-pulse"></i>' 
                 : '<i class="ph ph-cpu text-xl text-blue-400"></i>';
@@ -342,13 +386,12 @@
             const contentElem = document.getElementById(uniqueStreamId);
             let fullReply = "";
 
-            // 🔥 The Master v5.0 Payload Data
             const payloadData = {
                 id: chat.id,
                 title: chat.title,
                 messages: chat.messages,
-                client: "web",                    // Explicitly tells backend this is Web UI
-                deep_think: isDeepThinkEnabled    // Triggers OpenRouter API if true
+                client: "web",
+                deep_think: isDeepThinkEnabled
             };
 
             try {
