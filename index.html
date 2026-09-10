@@ -59,6 +59,44 @@
         </div>
     </div>
 
+    <!-- ⚙️ SETTINGS MODAL (Voice Selection) -->
+    <div id="settingsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-apexCard border border-white/10 w-full max-w-sm rounded-xl p-6 shadow-2xl relative">
+            <button onclick="toggleSettings()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="ph ph-x text-xl"></i></button>
+            <h2 class="text-lg font-bold tracking-widest uppercase text-blue-400 mb-6 flex items-center gap-2"><i class="ph ph-sliders"></i> Neural Core Settings</h2>
+            
+            <div class="space-y-4">
+                <label class="text-xs text-gray-400 font-semibold uppercase block">Select AI Voice Identity</label>
+                
+                <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-lg cursor-pointer hover:border-blue-500/50 transition-all">
+                    <input type="radio" name="voice_select" value="en-US-ChristopherNeural" class="text-blue-500 focus:ring-blue-500 bg-gray-800 border-gray-600">
+                    <div>
+                        <div class="text-sm font-bold text-gray-200">The Phantom Core</div>
+                        <div class="text-[10px] text-gray-500 uppercase">Deep Male • Authoritative</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-lg cursor-pointer hover:border-blue-500/50 transition-all">
+                    <input type="radio" name="voice_select" value="en-US-AriaNeural" class="text-blue-500 focus:ring-blue-500 bg-gray-800 border-gray-600">
+                    <div>
+                        <div class="text-sm font-bold text-gray-200">Sci-Fi Echo</div>
+                        <div class="text-[10px] text-gray-500 uppercase">Crisp Female • Futuristic</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-blue-500/30 rounded-lg cursor-pointer hover:border-blue-500/50 transition-all shadow-[0_0_10px_rgba(37,99,235,0.1)]">
+                    <input type="radio" name="voice_select" value="en-IN-PrabhatNeural" checked class="text-blue-500 focus:ring-blue-500 bg-gray-800 border-gray-600">
+                    <div>
+                        <div class="text-sm font-bold text-blue-400">Desi Hacker (Pro)</div>
+                        <div class="text-[10px] text-gray-500 uppercase">Indian Accent • Master Developer</div>
+                    </div>
+                </label>
+                
+                <button onclick="saveSettings()" class="w-full mt-2 bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-2.5 rounded-lg transition-all text-xs shadow-md">Save & Deploy</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Sidebar -->
     <aside class="w-[280px] bg-apexCard flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5 shadow-2xl relative z-10">
         <div class="p-4 border-b border-white/5">
@@ -68,7 +106,10 @@
         <div class="p-4 border-t border-white/5 flex flex-col gap-2 text-xs bg-[#070a10]/50">
             <div class="flex items-center justify-between text-gray-400">
                 <div class="flex items-center gap-2 font-medium"><div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.8)]"></div><span id="serverStatus">Syncing Cluster...</span></div>
-                <button onclick="logout()" title="Terminate Session" class="hover:text-red-500 transition-colors text-base"><i class="ph ph-power"></i></button>
+                <div class="flex gap-3 text-base">
+                    <button onclick="toggleSettings()" title="Settings" class="hover:text-blue-400 transition-colors"><i class="ph ph-gear-six"></i></button>
+                    <button onclick="logout()" title="Terminate Session" class="hover:text-red-500 transition-colors"><i class="ph ph-power"></i></button>
+                </div>
             </div>
             <div class="text-[10px] font-bold text-blue-500/50 uppercase tracking-widest text-center mt-1">Aura Level: Infinite ♾️</div>
         </div>
@@ -80,34 +121,30 @@
             <button onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="ph ph-list text-2xl text-blue-400"></i></button>
             <h1 class="font-bold text-xs tracking-widest uppercase flex items-center gap-2"><i class="ph ph-cpu text-blue-500"></i> ApexNet Core</h1>
             <div class="flex items-center gap-4">
-                <i class="ph ph-power text-lg cursor-pointer text-red-500" onclick="logout()"></i>
+                <i class="ph ph-gear-six text-lg cursor-pointer text-gray-400" onclick="toggleSettings()"></i>
                 <i class="ph ph-plus-circle text-xl cursor-pointer text-blue-400" onclick="createNewChat()"></i>
             </div>
         </header>
 
         <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-5xl mx-auto flex flex-col gap-6 scroll-smooth">
-            <!-- Welcome Screen -->
+            <!-- Chat history will load here -->
         </div>
 
-        <!-- 🧠 Floating Input Area -->
+        <!-- Floating Input Area -->
         <div class="flex-shrink-0 w-full bg-gradient-to-t from-[#070a10] via-[#070a10] to-transparent pb-6 pt-4 px-4 md:px-8">
             <div class="max-w-4xl mx-auto relative flex flex-col bg-apexHover border border-white/10 rounded-2xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] focus-within:border-blue-500/50 transition-all">
-                
-                <!-- DeepThink / Google Core Toggle Bar -->
                 <div class="flex items-center gap-3 px-4 pt-3 pb-1">
                     <button id="deepThinkBtn" onclick="toggleDeepThink()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 text-gray-400 bg-black/20 hover:bg-black/40 transition-all">
                         <i class="ph ph-brain text-sm"></i> <span id="deepThinkText">Google Core: OFF</span>
                     </button>
                     <div id="deepThinkIndicator" class="hidden h-1.5 w-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse"></div>
                 </div>
-
-                <!-- Input Area -->
                 <div class="relative flex items-end p-1.5 w-full">
                     <textarea id="userInput" rows="1" class="w-full max-h-[200px] bg-transparent py-2.5 pl-3 pr-14 text-sm md:text-base text-gray-100 placeholder-gray-500" placeholder="Execute command or ask for code..."></textarea>
                     <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]"><i class="ph ph-paper-plane-tilt text-xl font-bold"></i></button>
                 </div>
             </div>
-            <div class="text-center mt-3 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Engineered by Ayush • ApexNet v5.6 Omni-Engine</div>
+            <div class="text-center mt-3 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Engineered by Ayush • ApexNet v5.7 (Voice Protocol Enabled)</div>
         </div>
     </main>
 
@@ -115,11 +152,74 @@
         const GIST_URL = "https://gist.githubusercontent.com/PandeyJI-9/6b0c7fa3c4ed32c7d6da9681876fb80f/raw/colab_link.txt";
         let COLAB_URL = "";
         let AUTH_TOKEN = localStorage.getItem('apex_token') || "";
+        let APEX_VOICE = localStorage.getItem('apex_voice') || "en-IN-PrabhatNeural";
+        
         let currentMode = 'login';
         let currentChatId = null;
         let chats = [];
         let isGenerating = false; 
         let isDeepThinkEnabled = false;
+
+        // Apply saved voice to UI
+        document.querySelector(`input[value="${APEX_VOICE}"]`).checked = true;
+
+        function toggleSettings() {
+            document.getElementById('settingsModal').classList.toggle('hidden');
+        }
+
+        function saveSettings() {
+            APEX_VOICE = document.querySelector('input[name="voice_select"]:checked').value;
+            localStorage.setItem('apex_voice', APEX_VOICE);
+            toggleSettings();
+        }
+
+        // 🔥 VOICE PLAYBACK ENGINE
+        async function playAudio(streamId, btnElement) {
+            const textElem = document.getElementById(streamId);
+            if (!textElem) return;
+            const textToSpeak = textElem.innerText;
+            
+            const originalHtml = btnElement.innerHTML;
+            btnElement.innerHTML = `<i class="ph ph-spinner animate-spin text-sm"></i> Processing Audio...`;
+            btnElement.disabled = true;
+
+            try {
+                const res = await fetch(`${COLAB_URL}/v1/audio`, {
+                    method: 'POST',
+                    headers: secureHeaders(),
+                    body: JSON.stringify({ text: textToSpeak, voice: APEX_VOICE })
+                });
+
+                if (!res.ok) throw new Error("Audio generation failed");
+                
+                const blob = await res.blob();
+                const audioUrl = URL.createObjectURL(blob);
+                const audio = new Audio(audioUrl);
+                
+                audio.onplay = () => {
+                    btnElement.innerHTML = `<i class="ph ph-waveform animate-pulse text-sm"></i> Playing Broadcast...`;
+                    btnElement.classList.replace('text-blue-400', 'text-green-400');
+                    btnElement.classList.replace('border-blue-500/30', 'border-green-500/50');
+                };
+                
+                audio.onended = () => {
+                    btnElement.innerHTML = originalHtml;
+                    btnElement.disabled = false;
+                    btnElement.classList.replace('text-green-400', 'text-blue-400');
+                    btnElement.classList.replace('border-green-500/50', 'border-blue-500/30');
+                };
+                
+                audio.onerror = () => { throw new Error("Playback failed"); };
+                
+                await audio.play();
+            } catch (err) {
+                btnElement.innerHTML = `<i class="ph ph-warning-circle text-sm text-red-400"></i> Error`;
+                setTimeout(() => { 
+                    btnElement.innerHTML = originalHtml; 
+                    btnElement.disabled = false; 
+                }, 2000);
+            }
+        }
 
         function setManualUrl() {
             const mUrl = document.getElementById('manualUrl').value.trim();
@@ -128,10 +228,9 @@
                 document.getElementById('serverStatus').innerText = 'Cluster Active (Manual)';
                 document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]';
                 document.getElementById('manualUrlBox').classList.add('hidden');
-                const errBox = document.getElementById('authError');
-                errBox.innerText = "System Overridden. Proceed to Auth.";
-                errBox.classList.remove('hidden');
-                errBox.className = "text-xs text-green-500 text-center font-bold bg-green-500/10 py-2 rounded-md border border-green-500/20";
+                document.getElementById('authError').innerText = "System Overridden. Proceed to Auth.";
+                document.getElementById('authError').classList.remove('hidden');
+                document.getElementById('authError').className = "text-xs text-green-500 text-center font-bold bg-green-500/10 py-2 rounded-md border border-green-500/20";
             }
         }
 
@@ -168,7 +267,7 @@
                 <h2 class="text-4xl font-black tracking-tighter mb-3 bg-gradient-to-br from-white via-blue-200 to-blue-600 bg-clip-text text-transparent uppercase">Terminal Access Granted</h2>
                 <div class="flex gap-2 mb-4">
                     <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-900/30 border border-blue-500/20 rounded-md">God-Mode Active</span>
-                    <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-400 bg-green-900/30 border border-green-500/20 rounded-md">Web Client</span>
+                    <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-purple-400 bg-purple-900/30 border border-purple-500/20 rounded-md">Voice Protocol</span>
                 </div>
                 <p class="text-gray-400 text-sm max-w-md leading-relaxed">Neural Engine synchronized. Awaiting elite execution commands.</p>
             </div>`;
@@ -278,7 +377,7 @@
             const chat = chats.find(c => c.id === id);
             
             if (chat && chat.messages.length > 0) {
-                chat.messages.forEach(msg => appendMessageUI(msg.role, msg.content));
+                chat.messages.forEach(msg => appendMessageUI(msg.role, msg.content, true));
             } else { document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); }
             renderHistory();
         }
@@ -292,13 +391,15 @@
             });
         }
 
-        function appendMessageUI(role, text) {
+        // Modified to inject Voice button for old chats as well
+        function appendMessageUI(role, text, isHistoryLoad = false) {
             const chatBox = document.getElementById('chatBox');
             if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
 
             const isUser = role === 'user';
             const msgRow = document.createElement('div');
             msgRow.className = `w-full flex my-4 px-2 md:px-4 ${isUser ? 'justify-end' : 'justify-start'}`;
+            const uniqueId = 'msg_' + Date.now() + Math.random().toString(36).substring(7);
 
             if (isUser) {
                 msgRow.innerHTML = `<div class="max-w-[85%] md:max-w-[70%] bg-blue-600 text-white px-5 py-4 rounded-2xl rounded-tr-sm shadow-[0_5px_20px_-5px_rgba(37,99,235,0.4)] text-sm md:text-base leading-relaxed break-words font-medium tracking-wide">${text}</div>`;
@@ -306,7 +407,13 @@
                 msgRow.innerHTML = `
                     <div class="max-w-[95%] md:max-w-[85%] flex gap-4 items-start bg-apexHover border border-white/5 px-5 md:px-6 py-5 rounded-2xl rounded-tl-sm shadow-xl text-sm md:text-base text-gray-200">
                         <div class="w-9 h-9 rounded-xl bg-blue-900/30 border border-blue-500/40 flex-shrink-0 flex items-center justify-center text-blue-400 shadow-[0_0_10px_rgba(37,99,235,0.2)] mt-0.5"><i class="ph ph-cpu text-xl"></i></div>
-                        <div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose">${marked.parse(text)}</div>
+                        <div class="w-full">
+                            <div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose" id="${uniqueId}">${marked.parse(text)}</div>
+                            ${isHistoryLoad ? `
+                            <div class="mt-3 flex items-center justify-end border-t border-white/5 pt-2">
+                                <button onclick="playAudio('${uniqueId}', this)" class="text-[10px] text-blue-400 hover:text-blue-300 flex items-center gap-1.5 bg-blue-900/20 px-2.5 py-1.5 rounded-md border border-blue-500/30 transition-all uppercase tracking-widest font-bold"><i class="ph ph-speaker-high text-sm"></i> Play Voice</button>
+                            </div>` : ''}
+                        </div>
                     </div>`;
             }
             chatBox.appendChild(msgRow);
@@ -320,11 +427,9 @@
             const input = document.getElementById('userInput');
             const text = input.value.trim();
             if (!text) return;
-
             if (!AUTH_TOKEN) { document.getElementById('authModal').classList.remove('hidden'); return; }
 
             isGenerating = true; 
-
             if (!currentChatId) await createNewChat();
             
             appendMessageUI('user', text);
@@ -353,10 +458,13 @@
                     <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 shadow-[0_0_15px_#3b82f6]"></div>
                     <div class="w-9 h-9 rounded-xl ${bgClass} border flex-shrink-0 flex items-center justify-center shadow-sm mt-0.5 apex-glow">${iconHTML}</div>
                     <div class="w-full">
-                        <!-- 🔥 GHOST EDIT STATUS BLOCK -->
                         <div id="status_${uniqueStreamId}" class="text-xs font-mono font-bold text-blue-400 mb-2 animate-pulse hidden tracking-wide"></div>
-                        <!-- FINAL CONTENT BLOCK -->
                         <div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose font-medium" id="${uniqueStreamId}"><span class="inline-block w-2.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle shadow-[0_0_8px_#60a5fa]"></span></div>
+                        
+                        <!-- AUDIO ACTION BAR (Hidden until stream finishes) -->
+                        <div id="audiobar_${uniqueStreamId}" class="hidden mt-3 flex items-center justify-end border-t border-white/5 pt-2">
+                            <button onclick="playAudio('${uniqueStreamId}', this)" class="text-[10px] text-blue-400 hover:text-blue-300 flex items-center gap-1.5 bg-blue-900/20 px-2.5 py-1.5 rounded-md border border-blue-500/30 transition-all uppercase tracking-widest font-bold"><i class="ph ph-speaker-high text-sm"></i> Play Voice</button>
+                        </div>
                     </div>
                 </div>`;
             chatBox.appendChild(aiRow);
@@ -366,21 +474,10 @@
             const statusElem = document.getElementById(`status_${uniqueStreamId}`);
             let fullReply = "";
 
-            const payloadData = {
-                id: chat.id,
-                title: chat.title,
-                messages: chat.messages,
-                client: "web",
-                deep_think: isDeepThinkEnabled
-            };
+            const payloadData = { id: chat.id, title: chat.title, messages: chat.messages, client: "web", deep_think: isDeepThinkEnabled };
 
             try {
-                const response = await fetch(`${COLAB_URL}/v1/chat`, {
-                    method: 'POST',
-                    headers: secureHeaders(),
-                    body: JSON.stringify(payloadData)
-                });
-
+                const response = await fetch(`${COLAB_URL}/v1/chat`, { method: 'POST', headers: secureHeaders(), body: JSON.stringify(payloadData) });
                 if (!response.ok) throw new Error("Stream failed");
 
                 const reader = response.body.getReader();
@@ -399,18 +496,10 @@
                             if (dataStr === "[DONE]") break;
                             try {
                                 const parsed = JSON.parse(dataStr);
-                                
-                                // 🔥 GHOST EDIT LOGIC
                                 if (parsed.status) {
-                                    if (parsed.status === "DONE") {
-                                        statusElem.classList.add('hidden');
-                                    } else {
-                                        statusElem.classList.remove('hidden');
-                                        statusElem.innerText = parsed.status;
-                                        chatBox.scrollTop = chatBox.scrollHeight;
-                                    }
+                                    if (parsed.status === "DONE") { statusElem.classList.add('hidden'); } 
+                                    else { statusElem.classList.remove('hidden'); statusElem.innerText = parsed.status; chatBox.scrollTop = chatBox.scrollHeight; }
                                 }
-                                // CONTENT LOGIC
                                 if (parsed.content) {
                                     fullReply += parsed.content;
                                     contentElem.innerHTML = marked.parse(fullReply) + '<span class="inline-block w-2.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle shadow-[0_0_8px_#60a5fa]"></span>';
@@ -426,6 +515,9 @@
 
                 chat.messages.push({ role: 'assistant', content: fullReply });
                 await saveCloudChat(chat);
+                
+                // 🔥 SHOW THE PLAY AUDIO BUTTON
+                document.getElementById(`audiobar_${uniqueStreamId}`).classList.remove('hidden');
 
             } catch (err) {
                 contentElem.innerHTML = "<span class='text-red-400 font-bold'>🚨 Connection Severed. Check Neural Cluster Status.</span>";
@@ -434,17 +526,14 @@
                 aiRow.firstElementChild.classList.remove('border-blue-500/20');
                 aiRow.firstElementChild.classList.add('border-white/5');
                 aiRow.firstElementChild.querySelector('.absolute').remove();
-                statusElem.classList.add('hidden'); // Ensure ghost edit hides on end
+                statusElem.classList.add('hidden'); 
             }
         }
 
         const input = document.getElementById('userInput');
         input.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; });
         input.addEventListener('keydown', function(e) { 
-            if (e.key === 'Enter' && !e.shiftKey) { 
-                e.preventDefault(); 
-                if (!isGenerating) handleSend(); 
-            } 
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!isGenerating) handleSend(); } 
         });
 
         if (chats.length === 0) initSystem();
