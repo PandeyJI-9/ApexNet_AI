@@ -3,20 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ApexNet | Restricted Neural Terminal</title>
+    <title>ApexNet | Neural Core Terminal</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
-        tailwind.config = { 
-            darkMode: 'class', 
-            theme: { 
-                extend: { 
-                    colors: { apexDark: '#070a10', apexCard: '#0f141f', apexHover: '#171e2e', apexAccent: '#2563eb' },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
-                } 
-            } 
-        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { apexDark: '#070a10', apexCard: '#0f141f', apexHover: '#171e2e', apexAccent: '#2563eb' }, fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] } } } }
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -26,24 +18,23 @@
     
     <style>
         body { background-color: #070a10; color: #f3f4f6; font-family: 'Inter', sans-serif; margin: 0; height: 100dvh; display: flex; overflow: hidden; background-image: radial-gradient(circle at 50% 0%, #1e3a8a15 0%, transparent 70%); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
         .prose pre { background: #030508 !important; border: 1px solid #1f2937; border-radius: 0.75rem; padding: 1.25rem; margin-top: 1rem; overflow-x: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
         .prose code { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #60a5fa; background: #111827; padding: 0.1rem 0.3rem; border-radius: 0.25rem; }
         .prose pre code { background: transparent; padding: 0; }
         .prose p { margin-bottom: 1rem; line-height: 1.7; color: #d1d5db; }
-        textarea { resize: none; overflow-y: hidden; }
-        textarea:focus { outline: none; }
+        textarea { resize: none; overflow-y: hidden; } textarea:focus { outline: none; }
         @keyframes apexGlow { 0% { opacity: 0.4; box-shadow: 0 0 10px #3b82f6; } 50% { opacity: 1; box-shadow: 0 0 25px #60a5fa; } 100% { opacity: 0.4; box-shadow: 0 0 10px #3b82f6; } }
         .apex-glow { animation: apexGlow 2.5s infinite ease-in-out; }
         .matrix-bg { background-image: linear-gradient(rgba(11, 15, 25, 0.93), rgba(11, 15, 25, 0.93)), url('https://www.transparenttextures.com/patterns/cubes.png'); }
+        
+        /* Mic Pulse Animation */
+        @keyframes micPulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        .listening { animation: micPulse 1.5s infinite; background-color: #ef4444 !important; }
     </style>
 </head>
 <body class="matrix-bg text-gray-100 flex h-[100dvh] w-full selection:bg-blue-600/30 relative">
 
-    <!-- 🔐 RESTRICTED LOGIN MODAL -->
     <div id="authModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-apexCard border border-blue-500/20 w-full max-w-md rounded-2xl p-8 shadow-[0_0_50px_-12px_rgba(37,99,235,0.25)] space-y-6 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
@@ -56,16 +47,15 @@
                 <button onclick="switchTab('signup')" id="tabSignup" class="flex-1 py-3 rounded-lg text-gray-500 hover:text-white transition-all">Request Access</button>
             </div>
             <div class="space-y-4">
-                <div><label class="text-xs text-gray-400 block mb-1.5 font-semibold uppercase">Identity String</label><input type="text" id="authUsername" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors shadow-inner"></div>
-                <div><label class="text-xs text-gray-400 block mb-1.5 font-semibold uppercase">Security Cipher</label><input type="password" id="authPassword" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors shadow-inner"></div>
-                <div id="signupKeyBox" class="hidden"><label class="text-xs text-gray-400 block mb-1.5 font-semibold uppercase">Clearance Key</label><input type="text" id="authKey" placeholder="APEX-ADMIN-9999" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-600 shadow-inner"></div>
+                <div><label class="text-xs text-gray-400 block mb-1.5 font-semibold uppercase">Identity String</label><input type="text" id="authUsername" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500"></div>
+                <div><label class="text-xs text-gray-400 block mb-1.5 font-semibold uppercase">Security Cipher</label><input type="password" id="authPassword" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500"></div>
+                <div id="signupKeyBox" class="hidden"><label class="text-xs text-gray-400 block mb-1.5 font-semibold uppercase">Clearance Key</label><input type="text" id="authKey" placeholder="APEX-ADMIN-9999" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500"></div>
                 <p id="authError" class="text-xs text-red-500 text-center hidden font-bold bg-red-500/10 py-2.5 rounded-lg border border-red-500/20"></p>
-                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-3.5 rounded-xl transition-all text-xs shadow-[0_0_20px_rgba(37,99,235,0.4)] mt-2">Establish Connection</button>
-                
-                <button onclick="document.getElementById('manualUrlBox').classList.toggle('hidden')" class="text-[10px] text-gray-500 hover:text-white mt-4 underline decoration-dashed w-full text-center tracking-wider uppercase transition-colors">Server Offline? Manual Override</button>
+                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-3.5 rounded-xl transition-all text-xs mt-2">Establish Connection</button>
+                <button onclick="document.getElementById('manualUrlBox').classList.toggle('hidden')" class="text-[10px] text-gray-500 hover:text-white mt-4 w-full text-center uppercase">Manual Override</button>
                 <div id="manualUrlBox" class="mt-2 pt-4 border-t border-white/10 hidden">
-                    <input type="text" id="manualUrl" placeholder="https://...trycloudflare.com" class="w-full bg-[#070a10] border border-white/10 rounded-lg px-4 py-2.5 text-xs text-blue-100 mb-2 focus:border-blue-500 focus:outline-none">
-                    <button onclick="setManualUrl()" class="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold uppercase py-2.5 rounded-lg text-[10px] transition-all">Force Connect</button>
+                    <input type="text" id="manualUrl" placeholder="https://..." class="w-full bg-[#070a10] border border-white/10 rounded-lg px-4 py-2.5 text-xs text-blue-100 mb-2 focus:border-blue-500">
+                    <button onclick="setManualUrl()" class="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold uppercase py-2.5 rounded-lg text-[10px]">Force Connect</button>
                 </div>
             </div>
         </div>
@@ -73,67 +63,61 @@
 
     <!-- ⚙️ SETTINGS MODAL -->
     <div id="settingsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-apexCard border border-white/10 w-full max-w-sm rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-            <button onclick="toggleSettings()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"><i class="ph ph-x text-xl"></i></button>
+        <div class="bg-apexCard border border-white/10 w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="toggleSettings()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="ph ph-x text-xl"></i></button>
             <h2 class="text-lg font-bold tracking-widest uppercase text-blue-400 mb-6 flex items-center gap-2"><i class="ph ph-sliders"></i> Neural Settings</h2>
             <div class="space-y-5">
                 <div>
-                    <label class="text-xs text-gray-400 font-semibold uppercase block mb-3 tracking-wider">Select AI Identity</label>
+                    <label class="text-xs text-gray-400 font-semibold uppercase block mb-3">Select AI Identity</label>
                     <div class="space-y-2">
-                        <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-xl cursor-pointer hover:border-blue-500/50 transition-all">
+                        <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-xl cursor-pointer hover:border-blue-500/50">
                             <input type="radio" name="voice_select" value="hi-IN-MadhurNeural" checked class="text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 w-4 h-4">
                             <div><div class="text-sm font-bold text-blue-400">Desi Hacker (Pro)</div><div class="text-[10px] text-gray-500 uppercase">Hindi & English</div></div>
                         </label>
-                        <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-xl cursor-pointer hover:border-blue-500/50 transition-all">
+                        <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-xl cursor-pointer hover:border-blue-500/50">
                             <input type="radio" name="voice_select" value="en-US-AriaNeural" class="text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 w-4 h-4">
                             <div><div class="text-sm font-bold text-gray-200">Sci-Fi Echo</div><div class="text-[10px] text-gray-500 uppercase">Crisp Female</div></div>
                         </label>
                     </div>
                 </div>
                 <div>
-                    <label class="text-xs text-gray-400 font-semibold uppercase block mb-2 tracking-wider">Speech Velocity</label>
-                    <select id="voiceSpeed" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors">
+                    <label class="text-xs text-gray-400 font-semibold uppercase block mb-2">Speech Velocity</label>
+                    <select id="voiceSpeed" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500">
                         <option value="+0%">Normal Speed (1.0x)</option>
                         <option value="+20%">Fast Stream (1.2x)</option>
                         <option value="+50%">Overdrive (1.5x)</option>
                     </select>
                 </div>
-                <button onclick="saveSettings()" class="w-full mt-2 bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-3 rounded-xl transition-all text-xs shadow-lg">Save & Deploy</button>
+                <button onclick="saveSettings()" class="w-full mt-2 bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-3 rounded-xl text-xs">Save & Deploy</button>
             </div>
         </div>
     </div>
 
     <!-- Sidebar -->
     <aside class="w-[280px] bg-apexCard flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5 shadow-2xl relative z-10">
-        <div class="p-5 border-b border-white/5">
-            <button onclick="createNewChat()" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 transition-all text-sm font-bold text-blue-400 shadow-sm"><i class="ph ph-plus-circle text-lg"></i> Initialize Protocol</button>
-        </div>
+        <div class="p-5 border-b border-white/5"><button onclick="createNewChat()" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl bg-blue-600/10 text-sm font-bold text-blue-400"><i class="ph ph-plus-circle text-lg"></i> Initialize Protocol</button></div>
         <div class="flex-1 overflow-y-auto px-4 py-3 space-y-2" id="historyList"></div>
         <div class="p-5 border-t border-white/5 flex flex-col gap-3 text-xs bg-[#070a10]/80">
             <div class="flex items-center justify-between text-gray-400">
-                <div class="flex items-center gap-2 font-medium"><div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500"></div><span id="serverStatus">Syncing Cluster...</span></div>
+                <div class="flex items-center gap-2 font-medium"><div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500"></div><span id="serverStatus">Syncing...</span></div>
                 <div class="flex gap-4 text-lg">
-                    <button onclick="toggleSettings()" title="Settings" class="hover:text-blue-400 transition-colors"><i class="ph ph-gear-six"></i></button>
-                    <button onclick="logout()" title="Terminate Session" class="hover:text-red-500 transition-colors"><i class="ph ph-power"></i></button>
+                    <button onclick="toggleSettings()" class="hover:text-blue-400"><i class="ph ph-gear-six"></i></button>
+                    <button onclick="logout()" class="hover:text-red-500"><i class="ph ph-power"></i></button>
                 </div>
             </div>
         </div>
     </aside>
 
-    <!-- Main Chat Content -->
     <main class="flex-1 flex flex-col h-full w-full overflow-hidden relative">
         <header class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-apexCard text-white flex-shrink-0 shadow-md">
             <button onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="ph ph-list text-2xl text-blue-400"></i></button>
             <h1 class="font-bold text-xs tracking-widest uppercase flex items-center gap-2"><i class="ph ph-cpu text-blue-500"></i> ApexNet Core</h1>
-            <div class="flex items-center gap-4">
-                <i class="ph ph-gear-six text-xl cursor-pointer text-gray-400" onclick="toggleSettings()"></i>
-                <i class="ph ph-plus-circle text-2xl cursor-pointer text-blue-400" onclick="createNewChat()"></i>
-            </div>
+            <div class="flex items-center gap-4"><i class="ph ph-gear-six text-xl text-gray-400" onclick="toggleSettings()"></i><i class="ph ph-plus-circle text-2xl text-blue-400" onclick="createNewChat()"></i></div>
         </header>
 
         <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-5xl mx-auto flex flex-col gap-6 scroll-smooth"></div>
 
-        <!-- 🧠 Floating Input Area -->
+        <!-- 🧠 Floating Input Area (With Dynamic Mic UI) -->
         <div class="flex-shrink-0 w-full bg-gradient-to-t from-[#070a10] via-[#070a10] to-transparent pb-6 pt-4 px-4 md:px-8">
             <div class="max-w-4xl mx-auto relative flex flex-col bg-apexHover border border-white/10 rounded-2xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] focus-within:border-blue-500/50 transition-all">
                 <div class="flex items-center gap-3 px-4 pt-3 pb-1 border-b border-white/5">
@@ -142,12 +126,18 @@
                     </button>
                     <div id="deepThinkIndicator" class="hidden h-1.5 w-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse mb-2"></div>
                 </div>
+                
                 <div class="relative flex items-end p-2 w-full">
-                    <textarea id="userInput" rows="1" class="w-full max-h-[200px] bg-transparent py-3 pl-4 pr-16 text-sm md:text-base text-gray-100 placeholder-gray-500 focus:outline-none leading-relaxed" placeholder="Execute command or request code..."></textarea>
-                    <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]"><i class="ph ph-paper-plane-tilt text-xl font-bold"></i></button>
+                    <textarea id="userInput" rows="1" class="w-full max-h-[200px] bg-transparent py-3 pl-4 pr-16 text-sm md:text-base text-gray-100 placeholder-gray-500 focus:outline-none leading-relaxed" placeholder="Type a message or click Mic to talk..."></textarea>
+                    
+                    <!-- 🔥 DYNAMIC SEND / MIC BUTTON -->
+                    <button id="actionBtn" onclick="handleMicOrSend()" class="absolute right-3 bottom-3 p-3 bg-blue-600 text-white rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)] flex items-center justify-center">
+                        <i id="actionIcon" class="ph ph-microphone text-xl font-bold"></i>
+                    </button>
+
                 </div>
             </div>
-            <div class="text-center mt-4 text-[10px] text-gray-600 font-bold uppercase tracking-[0.25em]">Engineered by Ayush • ApexNet v5.8 Master UI</div>
+            <div class="text-center mt-4 text-[10px] text-gray-600 font-bold uppercase tracking-[0.25em]">Engineered by Ayush • ApexNet v5.9 (Live Voice Call)</div>
         </div>
     </main>
 
@@ -157,29 +147,81 @@
         let AUTH_TOKEN = localStorage.getItem('apex_token') || "";
         let APEX_VOICE = localStorage.getItem('apex_voice') || "hi-IN-MadhurNeural";
         let APEX_SPEED = localStorage.getItem('apex_speed') || "+0%";
-        
-        let currentMode = 'login';
-        let currentChatId = null;
-        let chats = [];
-        let isGenerating = false; 
-        let isDeepThinkEnabled = false;
+        let currentMode = 'login'; let currentChatId = null; let chats = [];
+        let isGenerating = false; let isDeepThinkEnabled = false;
+        let currentGlobalAudio = null; let currentActivePlayBtn = null; let currentActivePlayBtnHtml = "";
 
-        let currentGlobalAudio = null;
-        let currentActivePlayBtn = null;
-        let currentActivePlayBtnHtml = "";
-
-        const radioBtn = document.querySelector(`input[value="${APEX_VOICE}"]`);
-        if(radioBtn) radioBtn.checked = true;
-        const speedSel = document.getElementById("voiceSpeed");
-        if(speedSel) speedSel.value = APEX_SPEED;
+        const radioBtn = document.querySelector(`input[value="${APEX_VOICE}"]`); if(radioBtn) radioBtn.checked = true;
+        const speedSel = document.getElementById("voiceSpeed"); if(speedSel) speedSel.value = APEX_SPEED;
 
         function toggleSettings() { document.getElementById('settingsModal').classList.toggle('hidden'); }
         function saveSettings() {
             APEX_VOICE = document.querySelector('input[name="voice_select"]:checked').value;
             APEX_SPEED = document.getElementById("voiceSpeed").value;
-            localStorage.setItem('apex_voice', APEX_VOICE);
-            localStorage.setItem('apex_speed', APEX_SPEED);
+            localStorage.setItem('apex_voice', APEX_VOICE); localStorage.setItem('apex_speed', APEX_SPEED);
             toggleSettings();
+        }
+
+        // 🔥 DYNAMIC UI LOGIC (Mic vs Paper Plane)
+        const inputElem = document.getElementById('userInput');
+        const actionIcon = document.getElementById('actionIcon');
+        const actionBtn = document.getElementById('actionBtn');
+
+        inputElem.addEventListener('input', function() { 
+            this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; 
+            if(this.value.trim().length > 0) {
+                actionIcon.className = "ph ph-paper-plane-tilt text-xl font-bold";
+            } else {
+                actionIcon.className = "ph ph-microphone text-xl font-bold";
+            }
+        });
+
+        // 🔥 NATIVE SPEECH RECOGNITION (STT)
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'hi-IN'; // Understands Hindi & English perfectly
+        }
+
+        async function handleMicOrSend() {
+            if (isGenerating) return;
+            const text = inputElem.value.trim();
+            
+            if (text.length > 0) {
+                // If text exists, send normally
+                handleSend(false);
+            } else {
+                // If empty, Start Live Call (Mic)
+                if (!recognition) { alert("Your browser doesn't support Voice Input. Use Chrome."); return; }
+                
+                actionIcon.className = "ph ph-waveform animate-pulse text-xl font-bold";
+                actionBtn.classList.add('listening'); // Adds the red pulse
+
+                try { recognition.start(); } catch(e) {}
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    inputElem.value = transcript;
+                    resetMicBtn();
+                    // AUTO SEND WITH CALL MODE TRUE
+                    handleSend(true); 
+                };
+
+                recognition.onerror = () => resetMicBtn();
+                recognition.onend = () => resetMicBtn();
+            }
+        }
+
+        function resetMicBtn() {
+            actionBtn.classList.remove('listening');
+            if(inputElem.value.trim().length > 0) {
+                actionIcon.className = "ph ph-paper-plane-tilt text-xl font-bold";
+            } else {
+                actionIcon.className = "ph ph-microphone text-xl font-bold";
+            }
         }
 
         async function playAudio(streamId, btnElement) {
@@ -188,285 +230,150 @@
             const textToSpeak = decodeURIComponent(rawDataElem.innerText);
             
             if (currentGlobalAudio) {
-                currentGlobalAudio.pause();
-                currentGlobalAudio = null;
+                currentGlobalAudio.pause(); currentGlobalAudio = null;
                 if (currentActivePlayBtn) {
-                    currentActivePlayBtn.innerHTML = currentActivePlayBtnHtml;
-                    currentActivePlayBtn.disabled = false;
-                    currentActivePlayBtn.classList.replace('text-green-400', 'text-blue-400');
-                    currentActivePlayBtn.classList.replace('border-green-500/50', 'border-blue-500/30');
+                    currentActivePlayBtn.innerHTML = currentActivePlayBtnHtml; currentActivePlayBtn.disabled = false;
+                    currentActivePlayBtn.classList.replace('text-green-400', 'text-blue-400'); currentActivePlayBtn.classList.replace('border-green-500/50', 'border-blue-500/30');
                 }
             }
-            currentActivePlayBtnHtml = btnElement.innerHTML;
-            currentActivePlayBtn = btnElement;
-            btnElement.innerHTML = `<i class="ph ph-spinner animate-spin text-sm"></i> Syncing...`;
-            btnElement.disabled = true;
+            currentActivePlayBtnHtml = btnElement.innerHTML; currentActivePlayBtn = btnElement;
+            btnElement.innerHTML = `<i class="ph ph-spinner animate-spin text-sm"></i> Syncing...`; btnElement.disabled = true;
 
             try {
-                const res = await fetch(`${COLAB_URL}/v1/audio`, {
-                    method: 'POST',
-                    headers: secureHeaders(),
-                    body: JSON.stringify({ text: textToSpeak, voice: APEX_VOICE, speed: APEX_SPEED })
-                });
-
-                if (!res.ok) throw new Error("Audio stream failed");
+                const res = await fetch(`${COLAB_URL}/v1/audio`, { method: 'POST', headers: secureHeaders(), body: JSON.stringify({ text: textToSpeak, voice: APEX_VOICE, speed: APEX_SPEED }) });
+                if (!res.ok) throw new Error("Stream failed");
                 const blob = await res.blob();
-                const audioUrl = URL.createObjectURL(blob);
-                currentGlobalAudio = new Audio(audioUrl);
+                currentGlobalAudio = new Audio(URL.createObjectURL(blob));
                 
                 currentGlobalAudio.onplay = () => {
-                    btnElement.innerHTML = `<i class="ph ph-waveform animate-pulse text-sm"></i> Live Audio Stream`;
-                    btnElement.classList.replace('text-blue-400', 'text-green-400');
-                    btnElement.classList.replace('border-blue-500/30', 'border-green-500/50');
+                    btnElement.innerHTML = `<i class="ph ph-waveform animate-pulse text-sm"></i> Live Stream`;
+                    btnElement.classList.replace('text-blue-400', 'text-green-400'); btnElement.classList.replace('border-blue-500/30', 'border-green-500/50');
                 };
                 currentGlobalAudio.onended = () => {
-                    btnElement.innerHTML = currentActivePlayBtnHtml;
-                    btnElement.disabled = false;
-                    btnElement.classList.replace('text-green-400', 'text-blue-400');
-                    btnElement.classList.replace('border-green-500/50', 'border-blue-500/30');
+                    btnElement.innerHTML = currentActivePlayBtnHtml; btnElement.disabled = false;
+                    btnElement.classList.replace('text-green-400', 'text-blue-400'); btnElement.classList.replace('border-green-500/50', 'border-blue-500/30');
                     currentGlobalAudio = null;
                 };
                 await currentGlobalAudio.play();
             } catch (err) {
-                btnElement.innerHTML = `<i class="ph ph-warning-circle text-sm text-red-400"></i> Stream Error`;
+                btnElement.innerHTML = `<i class="ph ph-warning-circle text-sm text-red-400"></i> Error`;
                 setTimeout(() => { btnElement.innerHTML = currentActivePlayBtnHtml; btnElement.disabled = false; }, 2000);
             }
         }
 
-        // 🔥 THE MANUAL FIX IS HERE
         async function setManualUrl() {
             const mUrl = document.getElementById('manualUrl').value.trim();
             if (mUrl.startsWith("http")) {
-                COLAB_URL = mUrl.replace(/\/$/, "");
-                document.getElementById('serverStatus').innerText = 'Cluster Active (Manual)';
-                document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]';
+                COLAB_URL = mUrl.replace(/\/$/, ""); document.getElementById('serverStatus').innerText = 'Cluster Active (Manual)';
                 document.getElementById('manualUrlBox').classList.add('hidden');
-                
-                const errBox = document.getElementById('authError');
-                errBox.classList.remove('hidden');
-
+                const errBox = document.getElementById('authError'); errBox.classList.remove('hidden');
                 if (AUTH_TOKEN) {
-                    errBox.innerText = "URL Accepted. Verifying Cloud Access...";
-                    errBox.className = "text-xs text-blue-500 text-center font-bold bg-blue-500/10 py-2.5 rounded-lg border border-blue-500/20";
-                    try {
-                        await fetchCloudChats(); // It will automatically close modal if successful!
-                    } catch(e) {
-                        errBox.innerText = "Token Expired. Please Login Again.";
-                        errBox.className = "text-xs text-red-500 text-center font-bold bg-red-500/10 py-2.5 rounded-lg border border-red-500/20";
-                    }
+                    errBox.innerText = "URL Accepted. Verifying Cloud Access..."; errBox.className = "text-xs text-blue-500 font-bold bg-blue-500/10 py-2.5 rounded-lg border border-blue-500/20";
+                    try { await fetchCloudChats(); } catch(e) { errBox.innerText = "Token Expired. Login Again."; errBox.className = "text-xs text-red-500 font-bold bg-red-500/10 py-2.5 rounded-lg border border-red-500/20"; }
                 } else {
-                    errBox.innerText = "System Overridden. Proceed to Auth.";
-                    errBox.className = "text-xs text-green-500 text-center font-bold bg-green-500/10 py-2.5 rounded-lg border border-green-500/20";
+                    errBox.innerText = "System Overridden. Proceed to Auth."; errBox.className = "text-xs text-green-500 font-bold bg-green-500/10 py-2.5 rounded-lg border border-green-500/20";
                 }
             }
         }
 
         function toggleDeepThink() {
-            isDeepThinkEnabled = !isDeepThinkEnabled;
-            const btn = document.getElementById('deepThinkBtn');
-            const text = document.getElementById('deepThinkText');
-            if (isDeepThinkEnabled) {
-                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/50 text-blue-400 bg-blue-900/20 transition-all shadow-[0_0_15px_rgba(37,99,235,0.2)] mb-2";
-                text.innerText = "Google Core: ON"; document.getElementById('deepThinkIndicator').classList.remove('hidden');
-            } else {
-                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 text-gray-400 bg-black/30 hover:bg-black/50 transition-all mb-2";
-                text.innerText = "Google Core: OFF"; document.getElementById('deepThinkIndicator').classList.add('hidden');
-            }
+            isDeepThinkEnabled = !isDeepThinkEnabled; const btn = document.getElementById('deepThinkBtn'); const text = document.getElementById('deepThinkText');
+            if (isDeepThinkEnabled) { btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/50 text-blue-400 bg-blue-900/20 transition-all shadow-[0_0_15px_rgba(37,99,235,0.2)] mb-2"; text.innerText = "Google Core: ON"; document.getElementById('deepThinkIndicator').classList.remove('hidden'); } 
+            else { btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 text-gray-400 bg-black/30 hover:bg-black/50 transition-all mb-2"; text.innerText = "Google Core: OFF"; document.getElementById('deepThinkIndicator').classList.add('hidden'); }
         }
 
-        const secureHeaders = (isAuth = true) => {
-            const h = { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' };
-            if (isAuth && AUTH_TOKEN) h['Authorization'] = `Bearer ${AUTH_TOKEN}`;
-            return h;
-        };
+        const secureHeaders = (isAuth = true) => { const h = { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' }; if (isAuth && AUTH_TOKEN) h['Authorization'] = `Bearer ${AUTH_TOKEN}`; return h; };
 
-        const renderWelcomeScreen = () => {
-            return `<div class="h-full flex flex-col items-center justify-center text-center px-4" id="welcomeScreen">
-                <div class="w-28 h-28 bg-blue-900/20 border border-blue-500/30 rounded-full flex items-center justify-center mb-8 apex-glow relative shadow-[0_0_40px_rgba(37,99,235,0.15)]">
-                    <div class="absolute inset-0 rounded-full border border-blue-400/20 animate-ping"></div>
-                    <i class="ph ph-cpu text-6xl text-blue-400"></i></div>
-                <h2 class="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-br from-white via-blue-200 to-blue-600 bg-clip-text text-transparent uppercase tracking-tight">Terminal Access Granted</h2>
-                <div class="flex gap-3 mb-6"><span class="px-4 py-1.5 text-[10px] font-bold text-blue-400 bg-blue-900/30 border border-blue-500/20 rounded-md uppercase tracking-widest shadow-sm">God-Mode Protocol</span></div>
-                <p class="text-gray-400 text-sm md:text-base max-w-lg leading-relaxed font-medium">Neural Engine is synchronized and standing by. Awaiting elite execution commands.</p>
-            </div>`;
-        };
+        const renderWelcomeScreen = () => { return `<div class="h-full flex flex-col items-center justify-center text-center px-4" id="welcomeScreen"><div class="w-28 h-28 bg-blue-900/20 border border-blue-500/30 rounded-full flex items-center justify-center mb-8 apex-glow relative shadow-[0_0_40px_rgba(37,99,235,0.15)]"><div class="absolute inset-0 rounded-full border border-blue-400/20 animate-ping"></div><i class="ph ph-cpu text-6xl text-blue-400"></i></div><h2 class="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-br from-white via-blue-200 to-blue-600 bg-clip-text text-transparent uppercase tracking-tight">Terminal Access Granted</h2><div class="flex gap-3 mb-6"><span class="px-4 py-1.5 text-[10px] font-bold text-blue-400 bg-blue-900/30 border border-blue-500/20 rounded-md uppercase tracking-widest shadow-sm">God-Mode Protocol</span><span class="px-4 py-1.5 text-[10px] font-bold text-red-400 bg-red-900/30 border border-red-500/20 rounded-md uppercase tracking-widest shadow-sm">Live Call Active 📞</span></div></div>`; };
 
         async function initSystem() {
             document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); 
             try {
-                const linkRes = await fetch(`${GIST_URL}?t=${new Date().getTime()}`);
-                if (!linkRes.ok) throw new Error("Gist Fetch Blocked");
-                COLAB_URL = (await linkRes.text()).trim().replace(/\/$/, "");
-                document.getElementById('serverStatus').innerText = 'Cluster Active';
+                const linkRes = await fetch(`${GIST_URL}?t=${new Date().getTime()}`); if (!linkRes.ok) throw new Error("Blocked");
+                COLAB_URL = (await linkRes.text()).trim().replace(/\/$/, ""); document.getElementById('serverStatus').innerText = 'Cluster Active';
                 if (!AUTH_TOKEN) document.getElementById('authModal').classList.remove('hidden'); else await fetchCloudChats();
-            } catch (err) {
-                document.getElementById('serverStatus').innerText = 'Cluster Offline';
-                document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-red-500';
-                document.getElementById('authModal').classList.remove('hidden');
-            }
+            } catch (err) { document.getElementById('serverStatus').innerText = 'Cluster Offline'; document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-red-500'; document.getElementById('authModal').classList.remove('hidden'); }
         }
 
         async function fetchCloudChats() {
             try {
                 const res = await fetch(`${COLAB_URL}/v1/chats`, { headers: secureHeaders() });
-                if (res.ok) {
-                    const data = await res.json(); chats = data.chats || []; verifyToken();
-                    if (chats.length > 0) loadChat(chats[0].id); else createNewChat();
-                } else logout();
+                if (res.ok) { const data = await res.json(); chats = data.chats || []; verifyToken(); if (chats.length > 0) loadChat(chats[0].id); else createNewChat(); } else logout();
             } catch (e) { document.getElementById('authModal').classList.remove('hidden'); }
         }
 
         async function saveCloudChat(chat) { try { await fetch(`${COLAB_URL}/v1/chats/save`, { method: 'POST', headers: secureHeaders(), body: JSON.stringify(chat) }); } catch (e) {} }
 
         function switchTab(mode) {
-            currentMode = mode;
-            document.getElementById('tabLogin').className = mode === 'login' ? "flex-1 py-3 rounded-lg bg-blue-600 text-white shadow-md transition-all" : "flex-1 py-3 rounded-lg text-gray-500 hover:text-white transition-all";
-            document.getElementById('tabSignup').className = mode === 'signup' ? "flex-1 py-3 rounded-lg bg-blue-600 text-white shadow-md transition-all" : "flex-1 py-3 rounded-lg text-gray-500 hover:text-white transition-all";
-            document.getElementById('signupKeyBox').classList.toggle('hidden', mode === 'login');
-            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? "Establish Connection" : "Verify Clearance";
+            currentMode = mode; document.getElementById('tabLogin').className = mode === 'login' ? "flex-1 py-3 rounded-lg bg-blue-600 text-white shadow-md transition-all" : "flex-1 py-3 rounded-lg text-gray-500 hover:text-white transition-all"; document.getElementById('tabSignup').className = mode === 'signup' ? "flex-1 py-3 rounded-lg bg-blue-600 text-white shadow-md transition-all" : "flex-1 py-3 rounded-lg text-gray-500 hover:text-white transition-all"; document.getElementById('signupKeyBox').classList.toggle('hidden', mode === 'login'); document.getElementById('authSubmitBtn').innerText = mode === 'login' ? "Establish Connection" : "Verify Clearance";
         }
 
         async function handleAuthSubmit() {
-            const username = document.getElementById('authUsername').value.trim();
-            const password = document.getElementById('authPassword').value.trim();
-            const key = document.getElementById('authKey').value.trim();
-            const errBox = document.getElementById('authError');
+            const username = document.getElementById('authUsername').value.trim(); const password = document.getElementById('authPassword').value.trim(); const key = document.getElementById('authKey').value.trim(); const errBox = document.getElementById('authError');
             if (!username || !password) return;
-
             try {
-                let endpoint = currentMode === 'login' ? '/v1/auth/login' : '/v1/auth/signup';
-                let payload = currentMode === 'login' ? { username, password } : { username, password, activation_key: key };
+                let endpoint = currentMode === 'login' ? '/v1/auth/login' : '/v1/auth/signup'; let payload = currentMode === 'login' ? { username, password } : { username, password, activation_key: key };
                 const res = await fetch(`${COLAB_URL}${endpoint}`, { method: 'POST', headers: secureHeaders(false), body: JSON.stringify(payload) });
-
-                if (res.ok) {
-                    AUTH_TOKEN = (await res.json()).token; localStorage.setItem('apex_token', AUTH_TOKEN);
-                    document.getElementById('authModal').classList.add('hidden'); errBox.classList.add('hidden');
-                    await fetchCloudChats();
-                } else {
-                    const errData = await res.json();
-                    errBox.innerText = `Access Denied: ${res.status === 404 && currentMode === 'login' ? "Database Wiped on Colab restart! Use 'Request Access'." : errData.detail}`;
-                    errBox.classList.remove('hidden');
-                }
+                if (res.ok) { AUTH_TOKEN = (await res.json()).token; localStorage.setItem('apex_token', AUTH_TOKEN); document.getElementById('authModal').classList.add('hidden'); errBox.classList.add('hidden'); await fetchCloudChats(); } 
+                else { const errData = await res.json(); errBox.innerText = `Access Denied: ${res.status === 404 && currentMode === 'login' ? "Database Wiped on Colab restart! Use 'Request Access'." : errData.detail}`; errBox.classList.remove('hidden'); }
             } catch (err) { errBox.innerText = "Connection Failed."; errBox.classList.remove('hidden'); }
         }
 
         function verifyToken() { document.getElementById('authModal').classList.add('hidden'); }
         function logout() { localStorage.removeItem('apex_token'); AUTH_TOKEN = ""; document.getElementById('authModal').classList.remove('hidden'); }
         
-        async function createNewChat() {
-            if (isGenerating) return; 
-            currentChatId = 'chat_' + Date.now();
-            const newChat = { id: currentChatId, title: "Classified Intel", messages: [] };
-            chats.unshift(newChat); renderHistory(); document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); await saveCloudChat(newChat);
-        }
-
-        function loadChat(id) {
-            if (isGenerating) return; 
-            currentChatId = id; document.getElementById('chatBox').innerHTML = ''; 
-            const chat = chats.find(c => c.id === id);
-            if (chat && chat.messages.length > 0) { chat.messages.forEach(msg => appendMessageUI(msg.role, msg.content, true)); } 
-            else { document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); }
-            renderHistory();
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('historyList'); list.innerHTML = '';
-            chats.forEach(chat => {
-                const isActive = chat.id === currentChatId;
-                list.innerHTML += `<button onclick="loadChat('${chat.id}')" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl ${isActive ? 'bg-blue-600/10 border border-blue-500/30 text-blue-100 font-semibold shadow-inner' : 'text-gray-400 hover:bg-apexHover border border-transparent'} transition-all text-sm truncate"><i class="ph ph-terminal-window text-base text-blue-500"></i><span class="truncate tracking-wide">${chat.title}</span></button>`;
-            });
-        }
+        async function createNewChat() { if (isGenerating) return; currentChatId = 'chat_' + Date.now(); const newChat = { id: currentChatId, title: "Classified Intel", messages: [] }; chats.unshift(newChat); renderHistory(); document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); await saveCloudChat(newChat); }
+        function loadChat(id) { if (isGenerating) return; currentChatId = id; document.getElementById('chatBox').innerHTML = ''; const chat = chats.find(c => c.id === id); if (chat && chat.messages.length > 0) { chat.messages.forEach(msg => appendMessageUI(msg.role, msg.content, true)); } else { document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); } renderHistory(); }
+        function renderHistory() { const list = document.getElementById('historyList'); list.innerHTML = ''; chats.forEach(chat => { const isActive = chat.id === currentChatId; list.innerHTML += `<button onclick="loadChat('${chat.id}')" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl ${isActive ? 'bg-blue-600/10 border border-blue-500/30 text-blue-100 font-semibold shadow-inner' : 'text-gray-400 hover:bg-apexHover border border-transparent'} transition-all text-sm truncate"><i class="ph ph-terminal-window text-base text-blue-500"></i><span class="truncate tracking-wide">${chat.title}</span></button>`; }); }
 
         function appendMessageUI(role, text, isHistoryLoad = false) {
-            const chatBox = document.getElementById('chatBox');
-            if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
+            const chatBox = document.getElementById('chatBox'); if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
+            const isUser = role === 'user'; const msgRow = document.createElement('div'); msgRow.className = `w-full flex my-4 px-2 md:px-4 ${isUser ? 'justify-end' : 'justify-start'}`; const uniqueId = 'msg_' + Date.now() + Math.random().toString(36).substring(7);
 
-            const isUser = role === 'user';
-            const msgRow = document.createElement('div');
-            msgRow.className = `w-full flex my-4 px-2 md:px-4 ${isUser ? 'justify-end' : 'justify-start'}`;
-            const uniqueId = 'msg_' + Date.now() + Math.random().toString(36).substring(7);
-
-            if (isUser) {
-                msgRow.innerHTML = `<div class="max-w-[85%] md:max-w-[70%] bg-blue-600 text-white px-6 py-4 rounded-2xl rounded-tr-sm text-sm md:text-base leading-relaxed break-words font-medium shadow-[0_5px_20px_-5px_rgba(37,99,235,0.4)] tracking-wide">${text}</div>`;
-            } else {
-                msgRow.innerHTML = `
-                    <div class="max-w-[95%] md:max-w-[85%] flex gap-5 items-start bg-apexHover border border-white/5 px-6 md:px-7 py-6 rounded-2xl rounded-tl-sm text-sm md:text-base text-gray-200 shadow-xl">
-                        <div class="w-10 h-10 rounded-xl bg-blue-900/30 border border-blue-500/40 flex-shrink-0 flex items-center justify-center text-blue-400 mt-0.5 shadow-[0_0_10px_rgba(37,99,235,0.2)]"><i class="ph ph-cpu text-2xl"></i></div>
-                        <div class="w-full">
-                            <div class="hidden" id="raw_${uniqueId}">${encodeURIComponent(text)}</div>
-                            <div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose">${marked.parse(text)}</div>
-                            ${isHistoryLoad ? `<div class="mt-4 flex items-center justify-end border-t border-white/5 pt-3"><button onclick="playAudio('${uniqueId}', this)" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1.5 bg-blue-900/20 px-3 py-2 rounded-lg border border-blue-500/30 uppercase font-bold tracking-widest transition-all shadow-sm"><i class="ph ph-speaker-high text-base"></i> Play Voice</button></div>` : ''}
-                        </div>
-                    </div>`;
-            }
+            if (isUser) msgRow.innerHTML = `<div class="max-w-[85%] md:max-w-[70%] bg-blue-600 text-white px-6 py-4 rounded-2xl rounded-tr-sm text-sm md:text-base leading-relaxed break-words font-medium shadow-[0_5px_20px_-5px_rgba(37,99,235,0.4)] tracking-wide">${text}</div>`;
+            else msgRow.innerHTML = `<div class="max-w-[95%] md:max-w-[85%] flex gap-5 items-start bg-apexHover border border-white/5 px-6 md:px-7 py-6 rounded-2xl rounded-tl-sm text-sm md:text-base text-gray-200 shadow-xl"><div class="w-10 h-10 rounded-xl bg-blue-900/30 border border-blue-500/40 flex-shrink-0 flex items-center justify-center text-blue-400 mt-0.5 shadow-[0_0_10px_rgba(37,99,235,0.2)]"><i class="ph ph-cpu text-2xl"></i></div><div class="w-full"><div class="hidden" id="raw_${uniqueId}">${encodeURIComponent(text)}</div><div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose">${marked.parse(text)}</div>${isHistoryLoad ? `<div class="mt-4 flex items-center justify-end border-t border-white/5 pt-3"><button onclick="playAudio('${uniqueId}', this)" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1.5 bg-blue-900/20 px-3 py-2 rounded-lg border border-blue-500/30 uppercase font-bold tracking-widest transition-all shadow-sm"><i class="ph ph-speaker-high text-base"></i> Play Voice</button></div>` : ''}</div></div>`;
             chatBox.appendChild(msgRow); document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el)); chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        async function handleSend() {
+        // 🔥 MODIFIED: Accepts isCallMode flag
+        async function handleSend(isCallMode = false) {
             if (isGenerating) return; 
-            const input = document.getElementById('userInput'); const text = input.value.trim();
+            const text = inputElem.value.trim();
             if (!text) return; if (!AUTH_TOKEN) { document.getElementById('authModal').classList.remove('hidden'); return; }
 
             isGenerating = true; 
             if (!currentChatId) await createNewChat();
-            appendMessageUI('user', text); input.value = ''; input.style.height = 'auto';
+            appendMessageUI('user', text); inputElem.value = ''; inputElem.style.height = 'auto'; actionIcon.className = "ph ph-microphone text-xl font-bold";
 
             const chat = chats.find(c => c.id === currentChatId);
             if (chat.messages.length === 0) chat.title = text.substring(0, 25) + "...";
             chat.messages.push({ role: 'user', content: text }); await saveCloudChat(chat); renderHistory();
 
-            const chatBox = document.getElementById('chatBox');
-            if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
-
-            const uniqueStreamId = 'stream_' + Date.now();
-            const aiRow = document.createElement('div'); aiRow.className = `w-full flex my-4 px-2 md:px-4 justify-start`;
+            const chatBox = document.getElementById('chatBox'); if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
+            const uniqueStreamId = 'stream_' + Date.now(); const aiRow = document.createElement('div'); aiRow.className = `w-full flex my-4 px-2 md:px-4 justify-start`;
             const iconHTML = isDeepThinkEnabled ? '<i class="ph ph-brain text-2xl text-purple-400 animate-pulse"></i>' : '<i class="ph ph-cpu text-2xl text-blue-400"></i>';
             const bgClass = isDeepThinkEnabled ? 'bg-purple-900/30 border-purple-500/40' : 'bg-blue-900/30 border-blue-500/40';
 
-            aiRow.innerHTML = `
-                <div class="max-w-[95%] md:max-w-[85%] flex gap-5 items-start bg-apexHover border border-blue-500/20 px-6 md:px-7 py-6 rounded-2xl rounded-tl-sm text-sm md:text-base text-gray-200 w-full relative overflow-hidden shadow-[0_0_30px_-5px_rgba(37,99,235,0.15)]">
-                    <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 shadow-[0_0_15px_#3b82f6]"></div>
-                    <div class="w-10 h-10 rounded-xl ${bgClass} border flex-shrink-0 flex items-center justify-center mt-0.5 apex-glow">${iconHTML}</div>
-                    <div class="w-full">
-                        <div id="status_${uniqueStreamId}" class="text-xs font-mono font-bold text-blue-400 mb-3 animate-pulse hidden tracking-wider"></div>
-                        <div class="hidden" id="raw_${uniqueStreamId}"></div>
-                        <div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose" id="${uniqueStreamId}"><span class="inline-block w-2.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle shadow-[0_0_8px_#60a5fa]"></span></div>
-                        <div id="audiobar_${uniqueStreamId}" class="hidden mt-4 flex items-center justify-end border-t border-white/5 pt-3">
-                            <button onclick="playAudio('${uniqueStreamId}', this)" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1.5 bg-blue-900/20 px-3 py-2 rounded-lg border border-blue-500/30 uppercase font-bold tracking-widest transition-all shadow-sm"><i class="ph ph-speaker-high text-base"></i> Play Voice</button>
-                        </div>
-                    </div>
-                </div>`;
+            aiRow.innerHTML = `<div class="max-w-[95%] md:max-w-[85%] flex gap-5 items-start bg-apexHover border border-blue-500/20 px-6 md:px-7 py-6 rounded-2xl rounded-tl-sm text-sm md:text-base text-gray-200 w-full relative overflow-hidden shadow-[0_0_30px_-5px_rgba(37,99,235,0.15)]"><div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 shadow-[0_0_15px_#3b82f6]"></div><div class="w-10 h-10 rounded-xl ${bgClass} border flex-shrink-0 flex items-center justify-center mt-0.5 apex-glow">${iconHTML}</div><div class="w-full"><div id="status_${uniqueStreamId}" class="text-xs font-mono font-bold text-blue-400 mb-3 animate-pulse hidden tracking-wider"></div><div class="hidden" id="raw_${uniqueStreamId}"></div><div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose" id="${uniqueStreamId}"><span class="inline-block w-2.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle shadow-[0_0_8px_#60a5fa]"></span></div><div id="audiobar_${uniqueStreamId}" class="hidden mt-4 flex items-center justify-end border-t border-white/5 pt-3"><button id="playBtn_${uniqueStreamId}" onclick="playAudio('${uniqueStreamId}', this)" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1.5 bg-blue-900/20 px-3 py-2 rounded-lg border border-blue-500/30 uppercase font-bold tracking-widest transition-all shadow-sm"><i class="ph ph-speaker-high text-base"></i> Play Voice</button></div></div></div>`;
             chatBox.appendChild(aiRow); chatBox.scrollTop = chatBox.scrollHeight;
 
-            const contentElem = document.getElementById(uniqueStreamId);
-            const statusElem = document.getElementById(`status_${uniqueStreamId}`);
-            const rawElem = document.getElementById(`raw_${uniqueStreamId}`);
-            let fullReply = "";
+            const contentElem = document.getElementById(uniqueStreamId); const statusElem = document.getElementById(`status_${uniqueStreamId}`); const rawElem = document.getElementById(`raw_${uniqueStreamId}`); let fullReply = "";
 
             try {
-                const response = await fetch(`${COLAB_URL}/v1/chat`, { method: 'POST', headers: secureHeaders(), body: JSON.stringify({ id: chat.id, title: chat.title, messages: chat.messages, client: "web", deep_think: isDeepThinkEnabled }) });
+                // Sent Call Mode parameter
+                const response = await fetch(`${COLAB_URL}/v1/chat`, { method: 'POST', headers: secureHeaders(), body: JSON.stringify({ id: chat.id, title: chat.title, messages: chat.messages, client: "web", deep_think: isDeepThinkEnabled, call_mode: isCallMode }) });
                 if (!response.ok) throw new Error("Stream failed");
-
                 const reader = response.body.getReader(); const decoder = new TextDecoder();
                 while (true) {
                     const { value, done } = await reader.read(); if (done) break;
                     const lines = decoder.decode(value, { stream: true }).split("\n");
-
                     for (let line of lines) {
                         if (line.startsWith("data: ")) {
                             const dataStr = line.replace("data: ", "").trim(); if (dataStr === "[DONE]") break;
                             try {
                                 const parsed = JSON.parse(dataStr);
-                                if (parsed.status) {
-                                    if (parsed.status === "DONE") statusElem.classList.add('hidden'); 
-                                    else { statusElem.classList.remove('hidden'); statusElem.innerText = parsed.status; chatBox.scrollTop = chatBox.scrollHeight; }
-                                }
-                                if (parsed.content) {
-                                    fullReply += parsed.content;
-                                    rawElem.innerText = encodeURIComponent(fullReply);
-                                    contentElem.innerHTML = marked.parse(fullReply) + '<span class="inline-block w-2.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle shadow-[0_0_8px_#60a5fa]"></span>';
-                                    chatBox.scrollTop = chatBox.scrollHeight;
-                                }
+                                if (parsed.status) { if (parsed.status === "DONE") statusElem.classList.add('hidden'); else { statusElem.classList.remove('hidden'); statusElem.innerText = parsed.status; chatBox.scrollTop = chatBox.scrollHeight; } }
+                                if (parsed.content) { fullReply += parsed.content; rawElem.innerText = encodeURIComponent(fullReply); contentElem.innerHTML = marked.parse(fullReply) + '<span class="inline-block w-2.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle shadow-[0_0_8px_#60a5fa]"></span>'; chatBox.scrollTop = chatBox.scrollHeight; }
                             } catch (e) {}
                         }
                     }
@@ -475,16 +382,16 @@
                 chat.messages.push({ role: 'assistant', content: fullReply }); await saveCloudChat(chat);
                 document.getElementById(`audiobar_${uniqueStreamId}`).classList.remove('hidden');
 
-            } catch (err) { contentElem.innerHTML = "<span class='text-red-400 font-bold'>🚨 Connection Severed. Check Neural Cluster Status.</span>"; } 
-            finally {
-                isGenerating = false; aiRow.firstElementChild.classList.remove('border-blue-500/20'); aiRow.firstElementChild.classList.add('border-white/5');
-                aiRow.firstElementChild.querySelector('.absolute').remove(); statusElem.classList.add('hidden'); 
-            }
+                // 🔥 THE MAGIC: If call mode is active, automatically start playing the voice!
+                if (isCallMode) {
+                    setTimeout(() => { playAudio(uniqueStreamId, document.getElementById(`playBtn_${uniqueStreamId}`)); }, 500);
+                }
+
+            } catch (err) { contentElem.innerHTML = "<span class='text-red-400 font-bold'>🚨 Connection Severed.</span>"; } 
+            finally { isGenerating = false; aiRow.firstElementChild.classList.remove('border-blue-500/20'); aiRow.firstElementChild.classList.add('border-white/5'); aiRow.firstElementChild.querySelector('.absolute').remove(); statusElem.classList.add('hidden'); }
         }
 
-        const input = document.getElementById('userInput'); input.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; });
-        input.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!isGenerating) handleSend(); } });
-
+        inputElem.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!isGenerating && inputElem.value.trim().length > 0) handleSend(false); } });
         if (chats.length === 0) initSystem(); else renderHistory(); initSystem();
     </script>
 </body>
