@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ApexNet | Restricted Neural Terminal</title>
     
-    <!-- 🔥 FIX 1: Google Fonts Added Back -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
-    <!-- 🔥 FIX 2: Tailwind Typography Plugin Added (Iske bina Markdown kachra lagta hai) -->
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = { 
@@ -33,18 +30,12 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
-        
-        /* Typography Polish */
         .prose pre { background: #030508 !important; border: 1px solid #1f2937; border-radius: 0.75rem; padding: 1.25rem; margin-top: 1rem; overflow-x: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
         .prose code { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #60a5fa; background: #111827; padding: 0.1rem 0.3rem; border-radius: 0.25rem; }
         .prose pre code { background: transparent; padding: 0; }
         .prose p { margin-bottom: 1rem; line-height: 1.7; color: #d1d5db; }
-        .prose h1, .prose h2, .prose h3 { color: #f3f4f6; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        .prose strong { color: #ffffff; font-weight: 700; }
-        
         textarea { resize: none; overflow-y: hidden; }
         textarea:focus { outline: none; }
-        
         @keyframes apexGlow { 0% { opacity: 0.4; box-shadow: 0 0 10px #3b82f6; } 50% { opacity: 1; box-shadow: 0 0 25px #60a5fa; } 100% { opacity: 0.4; box-shadow: 0 0 10px #3b82f6; } }
         .apex-glow { animation: apexGlow 2.5s infinite ease-in-out; }
         .matrix-bg { background-image: linear-gradient(rgba(11, 15, 25, 0.93), rgba(11, 15, 25, 0.93)), url('https://www.transparenttextures.com/patterns/cubes.png'); }
@@ -59,7 +50,6 @@
             <div class="text-center">
                 <div class="inline-flex p-4 bg-blue-900/20 rounded-2xl text-blue-500 mb-4 border border-blue-500/30 shadow-[0_0_15px_rgba(37,99,235,0.2)]"><i class="ph ph-fingerprint text-4xl"></i></div>
                 <h2 class="text-2xl font-extrabold tracking-tight text-white">Classified Access</h2>
-                <p class="text-[11px] text-gray-400 mt-2">Colab restarted? Use Request Access.</p>
             </div>
             <div class="flex bg-[#070a10] p-1.5 rounded-xl border border-white/5 text-xs font-semibold uppercase tracking-wider">
                 <button onclick="switchTab('login')" id="tabLogin" class="flex-1 py-3 rounded-lg bg-blue-600 text-white transition-all shadow-md">Login</button>
@@ -81,41 +71,33 @@
         </div>
     </div>
 
-    <!-- ⚙️ SETTINGS MODAL (Restored UI) -->
+    <!-- ⚙️ SETTINGS MODAL -->
     <div id="settingsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-apexCard border border-white/10 w-full max-w-sm rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50"></div>
             <button onclick="toggleSettings()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"><i class="ph ph-x text-xl"></i></button>
             <h2 class="text-lg font-bold tracking-widest uppercase text-blue-400 mb-6 flex items-center gap-2"><i class="ph ph-sliders"></i> Neural Settings</h2>
-            
             <div class="space-y-5">
                 <div>
                     <label class="text-xs text-gray-400 font-semibold uppercase block mb-3 tracking-wider">Select AI Identity</label>
                     <div class="space-y-2">
                         <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-xl cursor-pointer hover:border-blue-500/50 transition-all">
-                            <input type="radio" name="voice_select" value="hi-IN-MadhurNeural" checked class="text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 focus:ring-offset-gray-800 w-4 h-4">
-                            <div><div class="text-sm font-bold text-blue-400">Desi Hacker (Pro)</div><div class="text-[10px] text-gray-500 uppercase">Hindi & English • Master AI</div></div>
+                            <input type="radio" name="voice_select" value="hi-IN-MadhurNeural" checked class="text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 w-4 h-4">
+                            <div><div class="text-sm font-bold text-blue-400">Desi Hacker (Pro)</div><div class="text-[10px] text-gray-500 uppercase">Hindi & English</div></div>
                         </label>
                         <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-xl cursor-pointer hover:border-blue-500/50 transition-all">
-                            <input type="radio" name="voice_select" value="en-US-AriaNeural" class="text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 focus:ring-offset-gray-800 w-4 h-4">
-                            <div><div class="text-sm font-bold text-gray-200">Sci-Fi Echo</div><div class="text-[10px] text-gray-500 uppercase">Crisp Female • English Only</div></div>
-                        </label>
-                        <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-xl cursor-pointer hover:border-blue-500/50 transition-all">
-                            <input type="radio" name="voice_select" value="en-US-ChristopherNeural" class="text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 focus:ring-offset-gray-800 w-4 h-4">
-                            <div><div class="text-sm font-bold text-gray-200">The Phantom</div><div class="text-[10px] text-gray-500 uppercase">Deep Male • Authoritative</div></div>
+                            <input type="radio" name="voice_select" value="en-US-AriaNeural" class="text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 w-4 h-4">
+                            <div><div class="text-sm font-bold text-gray-200">Sci-Fi Echo</div><div class="text-[10px] text-gray-500 uppercase">Crisp Female</div></div>
                         </label>
                     </div>
                 </div>
-
                 <div>
                     <label class="text-xs text-gray-400 font-semibold uppercase block mb-2 tracking-wider">Speech Velocity</label>
-                    <select id="voiceSpeed" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors appearance-none">
+                    <select id="voiceSpeed" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500 transition-colors">
                         <option value="+0%">Normal Speed (1.0x)</option>
                         <option value="+20%">Fast Stream (1.2x)</option>
                         <option value="+50%">Overdrive (1.5x)</option>
                     </select>
                 </div>
-                
                 <button onclick="saveSettings()" class="w-full mt-2 bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-3 rounded-xl transition-all text-xs shadow-lg">Save & Deploy</button>
             </div>
         </div>
@@ -129,13 +111,12 @@
         <div class="flex-1 overflow-y-auto px-4 py-3 space-y-2" id="historyList"></div>
         <div class="p-5 border-t border-white/5 flex flex-col gap-3 text-xs bg-[#070a10]/80">
             <div class="flex items-center justify-between text-gray-400">
-                <div class="flex items-center gap-2 font-medium"><div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.8)]"></div><span id="serverStatus">Syncing Cluster...</span></div>
+                <div class="flex items-center gap-2 font-medium"><div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500"></div><span id="serverStatus">Syncing Cluster...</span></div>
                 <div class="flex gap-4 text-lg">
                     <button onclick="toggleSettings()" title="Settings" class="hover:text-blue-400 transition-colors"><i class="ph ph-gear-six"></i></button>
                     <button onclick="logout()" title="Terminate Session" class="hover:text-red-500 transition-colors"><i class="ph ph-power"></i></button>
                 </div>
             </div>
-            <div class="text-[10px] font-bold text-blue-500/50 uppercase tracking-widest text-center mt-1">Aura Level: Infinite ♾️</div>
         </div>
     </aside>
 
@@ -150,21 +131,17 @@
             </div>
         </header>
 
-        <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-5xl mx-auto flex flex-col gap-6 scroll-smooth">
-            <!-- Chat history will load here -->
-        </div>
+        <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-5xl mx-auto flex flex-col gap-6 scroll-smooth"></div>
 
-        <!-- 🧠 Floating Input Area (Luxurious Design Restored) -->
+        <!-- 🧠 Floating Input Area -->
         <div class="flex-shrink-0 w-full bg-gradient-to-t from-[#070a10] via-[#070a10] to-transparent pb-6 pt-4 px-4 md:px-8">
             <div class="max-w-4xl mx-auto relative flex flex-col bg-apexHover border border-white/10 rounded-2xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] focus-within:border-blue-500/50 transition-all">
-                
                 <div class="flex items-center gap-3 px-4 pt-3 pb-1 border-b border-white/5">
                     <button id="deepThinkBtn" onclick="toggleDeepThink()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 text-gray-400 bg-black/30 hover:bg-black/50 transition-all mb-2">
                         <i class="ph ph-brain text-sm"></i> <span id="deepThinkText">Google Core: OFF</span>
                     </button>
                     <div id="deepThinkIndicator" class="hidden h-1.5 w-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse mb-2"></div>
                 </div>
-
                 <div class="relative flex items-end p-2 w-full">
                     <textarea id="userInput" rows="1" class="w-full max-h-[200px] bg-transparent py-3 pl-4 pr-16 text-sm md:text-base text-gray-100 placeholder-gray-500 focus:outline-none leading-relaxed" placeholder="Execute command or request code..."></textarea>
                     <button id="sendBtn" onclick="handleSend()" class="absolute right-3 bottom-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]"><i class="ph ph-paper-plane-tilt text-xl font-bold"></i></button>
@@ -187,12 +164,10 @@
         let isGenerating = false; 
         let isDeepThinkEnabled = false;
 
-        // 🔥 Global Audio Manager
         let currentGlobalAudio = null;
         let currentActivePlayBtn = null;
         let currentActivePlayBtnHtml = "";
 
-        // UI Init Settings
         const radioBtn = document.querySelector(`input[value="${APEX_VOICE}"]`);
         if(radioBtn) radioBtn.checked = true;
         const speedSel = document.getElementById("voiceSpeed");
@@ -207,13 +182,11 @@
             toggleSettings();
         }
 
-        // The Async Live Audio Streaming Logic
         async function playAudio(streamId, btnElement) {
             const rawDataElem = document.getElementById('raw_' + streamId);
             if (!rawDataElem) return;
             const textToSpeak = decodeURIComponent(rawDataElem.innerText);
             
-            // Stop overlapping DJ
             if (currentGlobalAudio) {
                 currentGlobalAudio.pause();
                 currentGlobalAudio = null;
@@ -224,11 +197,9 @@
                     currentActivePlayBtn.classList.replace('border-green-500/50', 'border-blue-500/30');
                 }
             }
-
             currentActivePlayBtnHtml = btnElement.innerHTML;
             currentActivePlayBtn = btnElement;
-
-            btnElement.innerHTML = `<i class="ph ph-spinner animate-spin text-sm"></i> Synchronizing...`;
+            btnElement.innerHTML = `<i class="ph ph-spinner animate-spin text-sm"></i> Syncing...`;
             btnElement.disabled = true;
 
             try {
@@ -239,7 +210,6 @@
                 });
 
                 if (!res.ok) throw new Error("Audio stream failed");
-                
                 const blob = await res.blob();
                 const audioUrl = URL.createObjectURL(blob);
                 currentGlobalAudio = new Audio(audioUrl);
@@ -249,7 +219,6 @@
                     btnElement.classList.replace('text-blue-400', 'text-green-400');
                     btnElement.classList.replace('border-blue-500/30', 'border-green-500/50');
                 };
-                
                 currentGlobalAudio.onended = () => {
                     btnElement.innerHTML = currentActivePlayBtnHtml;
                     btnElement.disabled = false;
@@ -257,7 +226,6 @@
                     btnElement.classList.replace('border-green-500/50', 'border-blue-500/30');
                     currentGlobalAudio = null;
                 };
-                
                 await currentGlobalAudio.play();
             } catch (err) {
                 btnElement.innerHTML = `<i class="ph ph-warning-circle text-sm text-red-400"></i> Stream Error`;
@@ -265,14 +233,31 @@
             }
         }
 
-        function setManualUrl() {
+        // 🔥 THE MANUAL FIX IS HERE
+        async function setManualUrl() {
             const mUrl = document.getElementById('manualUrl').value.trim();
             if (mUrl.startsWith("http")) {
                 COLAB_URL = mUrl.replace(/\/$/, "");
                 document.getElementById('serverStatus').innerText = 'Cluster Active (Manual)';
+                document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]';
                 document.getElementById('manualUrlBox').classList.add('hidden');
-                document.getElementById('authError').innerText = "System Overridden. Proceed to Auth.";
-                document.getElementById('authError').classList.remove('hidden');
+                
+                const errBox = document.getElementById('authError');
+                errBox.classList.remove('hidden');
+
+                if (AUTH_TOKEN) {
+                    errBox.innerText = "URL Accepted. Verifying Cloud Access...";
+                    errBox.className = "text-xs text-blue-500 text-center font-bold bg-blue-500/10 py-2.5 rounded-lg border border-blue-500/20";
+                    try {
+                        await fetchCloudChats(); // It will automatically close modal if successful!
+                    } catch(e) {
+                        errBox.innerText = "Token Expired. Please Login Again.";
+                        errBox.className = "text-xs text-red-500 text-center font-bold bg-red-500/10 py-2.5 rounded-lg border border-red-500/20";
+                    }
+                } else {
+                    errBox.innerText = "System Overridden. Proceed to Auth.";
+                    errBox.className = "text-xs text-green-500 text-center font-bold bg-green-500/10 py-2.5 rounded-lg border border-green-500/20";
+                }
             }
         }
 
@@ -301,8 +286,7 @@
                     <div class="absolute inset-0 rounded-full border border-blue-400/20 animate-ping"></div>
                     <i class="ph ph-cpu text-6xl text-blue-400"></i></div>
                 <h2 class="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-br from-white via-blue-200 to-blue-600 bg-clip-text text-transparent uppercase tracking-tight">Terminal Access Granted</h2>
-                <div class="flex gap-3 mb-6"><span class="px-4 py-1.5 text-[10px] font-bold text-blue-400 bg-blue-900/30 border border-blue-500/20 rounded-md uppercase tracking-widest shadow-sm">God-Mode Protocol</span>
-                <span class="px-4 py-1.5 text-[10px] font-bold text-green-400 bg-green-900/30 border border-green-500/20 rounded-md uppercase tracking-widest shadow-sm">Voice Core Async</span></div>
+                <div class="flex gap-3 mb-6"><span class="px-4 py-1.5 text-[10px] font-bold text-blue-400 bg-blue-900/30 border border-blue-500/20 rounded-md uppercase tracking-widest shadow-sm">God-Mode Protocol</span></div>
                 <p class="text-gray-400 text-sm md:text-base max-w-lg leading-relaxed font-medium">Neural Engine is synchronized and standing by. Awaiting elite execution commands.</p>
             </div>`;
         };
