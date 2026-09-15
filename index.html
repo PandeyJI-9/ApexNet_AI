@@ -3,396 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ApexNet | Neural Core Terminal</title>
+    <title>ApexNet v6.1 | Omni-Modal Core</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { apexDark: '#070a10', apexCard: '#0f141f', apexHover: '#171e2e', apexAccent: '#2563eb' }, fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] } } } }
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { apexDark: '#070a10', apexCard: '#0f141f', apexHover: '#171e2e' } } } }
     </script>
     
+    <!-- Cloud & Parser Implants -->
+    <script src="https://js.puter.com/v2/"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
+    <!-- PDF.js Implant for reading PDFs locally -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    
     <style>
-        body { background-color: #070a10; color: #f3f4f6; font-family: 'Inter', sans-serif; margin: 0; height: 100dvh; display: flex; overflow: hidden; background-image: radial-gradient(circle at 50% 0%, #1e3a8a15 0%, transparent 70%); }
+        body { background-color: #070a10; color: #f3f4f6; font-family: 'Inter', sans-serif; margin: 0; height: 100dvh; display: flex; overflow: hidden; }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
-        .prose pre { background: #030508 !important; border: 1px solid #1f2937; border-radius: 0.75rem; padding: 1.25rem; margin-top: 1rem; overflow-x: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
-        .prose code { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #60a5fa; background: #111827; padding: 0.1rem 0.3rem; border-radius: 0.25rem; }
-        .prose pre code { background: transparent; padding: 0; }
-        .prose p { margin-bottom: 1rem; line-height: 1.7; color: #d1d5db; }
-        textarea { resize: none; overflow-y: hidden; } textarea:focus { outline: none; }
-        @keyframes apexGlow { 0% { opacity: 0.4; box-shadow: 0 0 10px #3b82f6; } 50% { opacity: 1; box-shadow: 0 0 25px #60a5fa; } 100% { opacity: 0.4; box-shadow: 0 0 10px #3b82f6; } }
-        .apex-glow { animation: apexGlow 2.5s infinite ease-in-out; }
+        .prose pre { background: #030508 !important; border: 1px solid #1f2937; border-radius: 0.75rem; padding: 1rem; overflow-x: auto; }
         .matrix-bg { background-image: linear-gradient(rgba(11, 15, 25, 0.93), rgba(11, 15, 25, 0.93)), url('https://www.transparenttextures.com/patterns/cubes.png'); }
+        textarea { resize: none; overflow-y: hidden; } textarea:focus { outline: none; }
         
-        /* Mic Pulse Animation */
-        @keyframes micPulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        .listening { animation: micPulse 1.5s infinite; background-color: #ef4444 !important; }
+        /* Deep Think Animation */
+        details.think-block summary::-webkit-details-marker { display: none; }
     </style>
 </head>
-<body class="matrix-bg text-gray-100 flex h-[100dvh] w-full selection:bg-blue-600/30 relative">
+<body class="matrix-bg flex h-[100dvh] w-full selection:bg-blue-600/30">
 
-    <div id="authModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-apexCard border border-blue-500/20 w-full max-w-md rounded-2xl p-8 shadow-[0_0_50px_-12px_rgba(37,99,235,0.25)] space-y-6 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
-            <div class="text-center">
-                <div class="inline-flex p-4 bg-blue-900/20 rounded-2xl text-blue-500 mb-4 border border-blue-500/30 shadow-[0_0_15px_rgba(37,99,235,0.2)]"><i class="ph ph-fingerprint text-4xl"></i></div>
-                <h2 class="text-2xl font-extrabold tracking-tight text-white">Classified Access</h2>
-            </div>
-            <div class="flex bg-[#070a10] p-1.5 rounded-xl border border-white/5 text-xs font-semibold uppercase tracking-wider">
-                <button onclick="switchTab('login')" id="tabLogin" class="flex-1 py-3 rounded-lg bg-blue-600 text-white transition-all shadow-md">Login</button>
-                <button onclick="switchTab('signup')" id="tabSignup" class="flex-1 py-3 rounded-lg text-gray-500 hover:text-white transition-all">Request Access</button>
-            </div>
-            <div class="space-y-4">
-                <div><label class="text-xs text-gray-400 block mb-1.5 font-semibold uppercase">Identity String</label><input type="text" id="authUsername" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500"></div>
-                <div><label class="text-xs text-gray-400 block mb-1.5 font-semibold uppercase">Security Cipher</label><input type="password" id="authPassword" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500"></div>
-                <div id="signupKeyBox" class="hidden"><label class="text-xs text-gray-400 block mb-1.5 font-semibold uppercase">Clearance Key</label><input type="text" id="authKey" placeholder="APEX-ADMIN-9999" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500"></div>
-                <p id="authError" class="text-xs text-red-500 text-center hidden font-bold bg-red-500/10 py-2.5 rounded-lg border border-red-500/20"></p>
-                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-3.5 rounded-xl transition-all text-xs mt-2">Establish Connection</button>
-                <button onclick="document.getElementById('manualUrlBox').classList.toggle('hidden')" class="text-[10px] text-gray-500 hover:text-white mt-4 w-full text-center uppercase">Manual Override</button>
-                <div id="manualUrlBox" class="mt-2 pt-4 border-t border-white/10 hidden">
-                    <input type="text" id="manualUrl" placeholder="https://..." class="w-full bg-[#070a10] border border-white/10 rounded-lg px-4 py-2.5 text-xs text-blue-100 mb-2 focus:border-blue-500">
-                    <button onclick="setManualUrl()" class="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold uppercase py-2.5 rounded-lg text-[10px]">Force Connect</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ⚙️ SETTINGS MODAL -->
-    <div id="settingsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-apexCard border border-white/10 w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
-            <button onclick="toggleSettings()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="ph ph-x text-xl"></i></button>
-            <h2 class="text-lg font-bold tracking-widest uppercase text-blue-400 mb-6 flex items-center gap-2"><i class="ph ph-sliders"></i> Neural Settings</h2>
-            <div class="space-y-5">
-                <div>
-                    <label class="text-xs text-gray-400 font-semibold uppercase block mb-3">Select AI Identity</label>
-                    <div class="space-y-2">
-                        <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-xl cursor-pointer hover:border-blue-500/50">
-                            <input type="radio" name="voice_select" value="hi-IN-MadhurNeural" checked class="text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 w-4 h-4">
-                            <div><div class="text-sm font-bold text-blue-400">Desi Hacker (Pro)</div><div class="text-[10px] text-gray-500 uppercase">Hindi & English</div></div>
-                        </label>
-                        <label class="flex items-center gap-3 p-3 bg-[#070a10] border border-white/5 rounded-xl cursor-pointer hover:border-blue-500/50">
-                            <input type="radio" name="voice_select" value="en-US-AriaNeural" class="text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 w-4 h-4">
-                            <div><div class="text-sm font-bold text-gray-200">Sci-Fi Echo</div><div class="text-[10px] text-gray-500 uppercase">Crisp Female</div></div>
-                        </label>
-                    </div>
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400 font-semibold uppercase block mb-2">Speech Velocity</label>
-                    <select id="voiceSpeed" class="w-full bg-[#070a10] border border-white/10 rounded-xl px-4 py-3 text-sm text-blue-100 focus:outline-none focus:border-blue-500">
-                        <option value="+0%">Normal Speed (1.0x)</option>
-                        <option value="+20%">Fast Stream (1.2x)</option>
-                        <option value="+50%">Overdrive (1.5x)</option>
-                    </select>
-                </div>
-                <button onclick="saveSettings()" class="w-full mt-2 bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-3 rounded-xl text-xs">Save & Deploy</button>
-            </div>
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+        <div class="bg-apexCard border border-blue-500/20 w-full max-w-sm rounded-2xl p-8 text-center shadow-[0_0_50px_-12px_rgba(37,99,235,0.25)]">
+            <i class="ph ph-fingerprint text-6xl text-blue-500 mb-4 animate-pulse"></i>
+            <h2 class="text-2xl font-extrabold text-white mb-2 tracking-tight">ApexNet v6.1</h2>
+            <p class="text-xs text-gray-400 mb-8 uppercase tracking-widest">Omni-Modal Cloud Protocol</p>
+            <button onclick="loginWithPuter()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase py-3.5 rounded-xl transition-all shadow-lg">Login to System</button>
         </div>
     </div>
 
     <!-- Sidebar -->
-    <aside class="w-[280px] bg-apexCard flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5 shadow-2xl relative z-10">
-        <div class="p-5 border-b border-white/5"><button onclick="createNewChat()" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl bg-blue-600/10 text-sm font-bold text-blue-400"><i class="ph ph-plus-circle text-lg"></i> Initialize Protocol</button></div>
+    <aside class="w-[280px] bg-apexCard flex-shrink-0 flex flex-col hidden md:flex border-r border-white/5 shadow-2xl">
+        <div class="p-5 border-b border-white/5"><button onclick="createNewChat()" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl bg-blue-600/10 text-sm font-bold text-blue-400 hover:bg-blue-600/20"><i class="ph ph-plus-circle text-lg"></i> New Terminal</button></div>
         <div class="flex-1 overflow-y-auto px-4 py-3 space-y-2" id="historyList"></div>
         <div class="p-5 border-t border-white/5 flex flex-col gap-3 text-xs bg-[#070a10]/80">
             <div class="flex items-center justify-between text-gray-400">
-                <div class="flex items-center gap-2 font-medium"><div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500"></div><span id="serverStatus">Syncing...</span></div>
-                <div class="flex gap-4 text-lg">
-                    <button onclick="toggleSettings()" class="hover:text-blue-400"><i class="ph ph-gear-six"></i></button>
-                    <button onclick="logout()" class="hover:text-red-500"><i class="ph ph-power"></i></button>
-                </div>
+                <div class="flex items-center gap-2"><div id="statusDot" class="w-2 h-2 rounded-full bg-red-500"></div><span id="colabStatus">Colab Offline</span></div>
+                <button onclick="logoutPuter()" class="hover:text-red-500"><i class="ph ph-power text-lg"></i></button>
             </div>
+            <div class="text-[10px] text-blue-400 truncate" id="puterUserName">Agent: Unknown</div>
         </div>
     </aside>
 
+    <!-- Main Chat Area -->
     <main class="flex-1 flex flex-col h-full w-full overflow-hidden relative">
-        <header class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-apexCard text-white flex-shrink-0 shadow-md">
+        <header class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-apexCard text-white shadow-md">
             <button onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="ph ph-list text-2xl text-blue-400"></i></button>
-            <h1 class="font-bold text-xs tracking-widest uppercase flex items-center gap-2"><i class="ph ph-cpu text-blue-500"></i> ApexNet Core</h1>
-            <div class="flex items-center gap-4"><i class="ph ph-gear-six text-xl text-gray-400" onclick="toggleSettings()"></i><i class="ph ph-plus-circle text-2xl text-blue-400" onclick="createNewChat()"></i></div>
+            <h1 class="font-bold text-xs tracking-widest uppercase text-blue-500">ApexNet 6.1</h1>
+            <i class="ph ph-plus-circle text-2xl text-blue-400" onclick="createNewChat()"></i>
         </header>
 
         <div id="chatBox" class="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-5xl mx-auto flex flex-col gap-6 scroll-smooth"></div>
 
-        <!-- 🧠 Floating Input Area (With Dynamic Mic UI) -->
-        <div class="flex-shrink-0 w-full bg-gradient-to-t from-[#070a10] via-[#070a10] to-transparent pb-6 pt-4 px-4 md:px-8">
-            <div class="max-w-4xl mx-auto relative flex flex-col bg-apexHover border border-white/10 rounded-2xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] focus-within:border-blue-500/50 transition-all">
-                <div class="flex items-center gap-3 px-4 pt-3 pb-1 border-b border-white/5">
-                    <button id="deepThinkBtn" onclick="toggleDeepThink()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 text-gray-400 bg-black/30 hover:bg-black/50 transition-all mb-2">
-                        <i class="ph ph-brain text-sm"></i> <span id="deepThinkText">Google Core: OFF</span>
-                    </button>
-                    <div id="deepThinkIndicator" class="hidden h-1.5 w-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse mb-2"></div>
-                </div>
+        <!-- Input Area -->
+        <div class="flex-shrink-0 w-full bg-gradient-to-t from-[#070a10] via-[#070a10] to-transparent pb-6 pt-2 px-4 md:px-8 relative">
+            <div class="max-w-4xl mx-auto">
                 
-                <div class="relative flex items-end p-2 w-full">
-                    <textarea id="userInput" rows="1" class="w-full max-h-[200px] bg-transparent py-3 pl-4 pr-16 text-sm md:text-base text-gray-100 placeholder-gray-500 focus:outline-none leading-relaxed" placeholder="Type a message or click Mic to talk..."></textarea>
-                    
-                    <!-- 🔥 DYNAMIC SEND / MIC BUTTON -->
-                    <button id="actionBtn" onclick="handleMicOrSend()" class="absolute right-3 bottom-3 p-3 bg-blue-600 text-white rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)] flex items-center justify-center">
-                        <i id="actionIcon" class="ph ph-microphone text-xl font-bold"></i>
-                    </button>
+                <!-- Attachment Preview Bubble -->
+                <div id="attachmentPreview" class="hidden mb-2 inline-flex items-center gap-2 bg-blue-900/40 border border-blue-500/30 px-3 py-1.5 rounded-lg text-xs text-blue-200 shadow-lg">
+                    <i id="attachIcon" class="ph ph-file-text"></i>
+                    <span id="attachName" class="max-w-[150px] truncate">file.pdf</span>
+                    <button onclick="clearAttachment()" class="text-red-400 hover:text-red-300 ml-2"><i class="ph ph-x-circle"></i></button>
+                </div>
 
+                <div class="flex flex-col bg-apexHover border border-white/10 rounded-2xl p-2 shadow-2xl focus-within:border-blue-500/50 transition-all">
+                    <div class="flex items-center justify-between px-3 pt-2 pb-1 border-b border-white/5 mb-1">
+                        <button id="ragBtn" onclick="toggleRAG()" class="text-[10px] font-bold uppercase tracking-widest bg-purple-900/30 text-purple-400 px-3 py-1 rounded-full"><i class="ph ph-books"></i> Omni-Vault: OFF</button>
+                        <input type="text" id="manualColabUrl" placeholder="Colab URL..." class="bg-black/50 border border-white/10 rounded-md px-2 py-1 text-[10px] text-gray-300 w-32 focus:w-48 transition-all">
+                    </div>
+                    
+                    <div class="relative flex items-end w-full">
+                        <!-- Hidden File Input -->
+                        <input type="file" id="fileUpload" class="hidden" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+                        <!-- Attach Button -->
+                        <button onclick="document.getElementById('fileUpload').click()" class="p-3 text-gray-400 hover:text-blue-400 transition-all"><i class="ph ph-paperclip text-xl"></i></button>
+                        
+                        <textarea id="userInput" rows="1" class="w-full max-h-[150px] bg-transparent py-3 px-2 text-sm text-gray-100 placeholder-gray-500 focus:outline-none" placeholder="Execute command, /scan URL, or /imagine prompt..."></textarea>
+                        
+                        <button id="sendBtn" onclick="handleSend()" class="p-3 bg-blue-600 text-white rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.4)] ml-2 mb-1 mr-1"><i class="ph ph-paper-plane-tilt text-lg font-bold"></i></button>
+                    </div>
                 </div>
             </div>
-            <div class="text-center mt-4 text-[10px] text-gray-600 font-bold uppercase tracking-[0.25em]">Engineered by Ayush • ApexNet v5.9 (Live Voice Call)</div>
         </div>
     </main>
 
     <script>
-        const GIST_URL = "https://gist.githubusercontent.com/PandeyJI-9/6b0c7fa3c4ed32c7d6da9681876fb80f/raw/colab_link.txt";
-        let COLAB_URL = "";
-        let AUTH_TOKEN = localStorage.getItem('apex_token') || "";
-        let APEX_VOICE = localStorage.getItem('apex_voice') || "hi-IN-MadhurNeural";
-        let APEX_SPEED = localStorage.getItem('apex_speed') || "+0%";
-        let currentMode = 'login'; let currentChatId = null; let chats = [];
-        let isGenerating = false; let isDeepThinkEnabled = false;
-        let currentGlobalAudio = null; let currentActivePlayBtn = null; let currentActivePlayBtnHtml = "";
+        // Setup PDF.js Worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-        const radioBtn = document.querySelector(`input[value="${APEX_VOICE}"]`); if(radioBtn) radioBtn.checked = true;
-        const speedSel = document.getElementById("voiceSpeed"); if(speedSel) speedSel.value = APEX_SPEED;
+        let currentUser = null;
+        let chats = [];
+        let currentChatId = null;
+        let isGenerating = false;
+        let isRAGEnabled = false;
+        
+        // Attachment Data
+        let currentAttachment = { type: null, data: null, name: null };
 
-        function toggleSettings() { document.getElementById('settingsModal').classList.toggle('hidden'); }
-        function saveSettings() {
-            APEX_VOICE = document.querySelector('input[name="voice_select"]:checked').value;
-            APEX_SPEED = document.getElementById("voiceSpeed").value;
-            localStorage.setItem('apex_voice', APEX_VOICE); localStorage.setItem('apex_speed', APEX_SPEED);
-            toggleSettings();
-        }
-
-        // 🔥 DYNAMIC UI LOGIC (Mic vs Paper Plane)
-        const inputElem = document.getElementById('userInput');
-        const actionIcon = document.getElementById('actionIcon');
-        const actionBtn = document.getElementById('actionBtn');
-
-        inputElem.addEventListener('input', function() { 
-            this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; 
-            if(this.value.trim().length > 0) {
-                actionIcon.className = "ph ph-paper-plane-tilt text-xl font-bold";
-            } else {
-                actionIcon.className = "ph ph-microphone text-xl font-bold";
+        // Puter Auth
+        async function checkPuterStatus() {
+            if (puter.auth.isSignedIn()) {
+                currentUser = await puter.auth.getUser();
+                document.getElementById('puterUserName').innerText = `Agent: ${currentUser.username}`;
+                document.getElementById('authModal').classList.add('hidden');
+                loadCloudData();
             }
-        });
+        }
+        async function loginWithPuter() { await puter.auth.signIn(); window.location.reload(); }
+        async function logoutPuter() { await puter.auth.signOut(); window.location.reload(); }
 
-        // 🔥 NATIVE SPEECH RECOGNITION (STT)
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let recognition = null;
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'hi-IN'; // Understands Hindi & English perfectly
+        // Cloud DB
+        async function loadCloudData() {
+            const storedChats = await puter.kv.get("apex_chats");
+            if (storedChats) chats = JSON.parse(storedChats);
+            if (chats.length > 0) loadChat(chats[0].id); else createNewChat();
+            renderHistory();
+        }
+        async function saveCloudData() { if (currentUser) await puter.kv.set("apex_chats", JSON.stringify(chats)); }
+
+        // RAG Toggle
+        function toggleRAG() {
+            isRAGEnabled = !isRAGEnabled;
+            const btn = document.getElementById('ragBtn');
+            btn.innerHTML = isRAGEnabled ? '<i class="ph ph-books"></i> Omni-Vault: ON' : '<i class="ph ph-books"></i> Omni-Vault: OFF';
+            btn.className = isRAGEnabled ? "text-[10px] font-bold uppercase tracking-widest bg-purple-900/50 text-purple-300 border border-purple-400 px-3 py-1 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.4)]" : "text-[10px] font-bold uppercase tracking-widest bg-purple-900/30 text-purple-400 border border-transparent px-3 py-1 rounded-full";
         }
 
-        async function handleMicOrSend() {
+        // --- ATTACHMENT LOGIC (PDF & Image) ---
+        async function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            document.getElementById('attachmentPreview').classList.remove('hidden');
+            document.getElementById('attachName').innerText = "Processing...";
+            
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentAttachment = { type: 'image', data: e.target.result, name: file.name };
+                    document.getElementById('attachIcon').className = "ph ph-image";
+                    document.getElementById('attachName').innerText = file.name;
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type === 'application/pdf') {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    let text = `--- EXTRACTED PDF: ${file.name} ---\n`;
+                    // Read first 10 pages to avoid memory crash
+                    const maxPages = Math.min(pdf.numPages, 10); 
+                    for (let i = 1; i <= maxPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const content = await page.getTextContent();
+                        text += content.items.map(item => item.str).join(' ') + "\n";
+                    }
+                    currentAttachment = { type: 'pdf', data: text, name: file.name };
+                    document.getElementById('attachIcon').className = "ph ph-file-pdf";
+                    document.getElementById('attachName').innerText = file.name;
+                } catch (err) {
+                    alert("PDF processing failed!");
+                    clearAttachment();
+                }
+            } else {
+                alert("Only Images and PDFs are supported right now!");
+                clearAttachment();
+            }
+        }
+
+        function clearAttachment() {
+            currentAttachment = { type: null, data: null, name: null };
+            document.getElementById('fileUpload').value = '';
+            document.getElementById('attachmentPreview').classList.add('hidden');
+        }
+
+        // --- CHAT LOGIC ---
+        async function createNewChat() {
+            if (isGenerating) return;
+            currentChatId = 'chat_' + Date.now();
+            chats.unshift({ id: currentChatId, title: "New Intelligence", messages: [] });
+            document.getElementById('chatBox').innerHTML = `<div class="h-full flex flex-col items-center justify-center opacity-50"><i class="ph ph-cpu text-6xl text-blue-500 mb-4"></i><h2 class="text-2xl font-bold uppercase tracking-widest">Omni-Core Ready</h2></div>`;
+            renderHistory(); await saveCloudData();
+        }
+
+        function loadChat(id) {
+            if (isGenerating) return;
+            currentChatId = id;
+            document.getElementById('chatBox').innerHTML = '';
+            chats.find(c => c.id === id).messages.forEach(msg => appendMessageUI(msg.role, msg.content, msg.attachment));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+            chats.forEach(chat => {
+                const isActive = chat.id === currentChatId;
+                list.innerHTML += `<button onclick="loadChat('${chat.id}')" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl ${isActive ? 'bg-blue-600/20 text-blue-300 font-semibold' : 'text-gray-400 hover:bg-apexHover'} text-sm truncate"><i class="ph ph-terminal-window"></i><span class="truncate">${chat.title}</span></button>`;
+            });
+        }
+
+        function appendMessageUI(role, text, attachmentData = null) {
+            const chatBox = document.getElementById('chatBox');
+            const msgRow = document.createElement('div');
+            msgRow.className = `w-full flex my-4 px-2 ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+            
+            // Format DEEP THINKING tags to sexy UI
+            let formattedText = text;
+            formattedText = formattedText.replace(/<think>/g, '<details class="think-block mb-4 bg-black/40 border border-white/5 rounded-xl p-3"><summary class="cursor-pointer text-xs font-bold text-blue-400 flex items-center gap-2 select-none"><i class="ph ph-brain text-lg animate-pulse"></i> ApexNet Deep Thinking...</summary><div class="mt-3 text-xs text-gray-400 border-l-2 border-blue-500/30 pl-3">');
+            formattedText = formattedText.replace(/<\/think>/g, '</div></details>');
+
+            if (role === 'user') {
+                let attachHtml = '';
+                if (attachmentData && attachmentData.type === 'image') {
+                    attachHtml = `<img src="${attachmentData.data}" class="w-48 rounded-lg mb-2 border border-blue-400/30">`;
+                } else if (attachmentData && attachmentData.type === 'pdf') {
+                    attachHtml = `<div class="bg-blue-900/50 p-2 rounded mb-2 text-xs border border-blue-400/30"><i class="ph ph-file-pdf"></i> ${attachmentData.name} attached</div>`;
+                }
+                msgRow.innerHTML = `<div class="max-w-[85%] bg-blue-600 text-white px-5 py-3 rounded-2xl rounded-tr-sm text-sm shadow-lg">${attachHtml}${formattedText}</div>`;
+            } else {
+                msgRow.innerHTML = `<div class="max-w-[95%] bg-apexHover border border-white/5 px-5 py-4 rounded-2xl rounded-tl-sm text-sm text-gray-200 shadow-xl prose prose-invert overflow-x-auto w-full">${marked.parse(formattedText)}</div>`;
+            }
+            chatBox.appendChild(msgRow);
+            document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        const inputElem = document.getElementById('userInput');
+        inputElem.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; });
+        inputElem.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }});
+
+        async function handleSend() {
             if (isGenerating) return;
             const text = inputElem.value.trim();
+            const colabUrl = document.getElementById('manualColabUrl').value.trim().replace(/\/$/, "");
             
-            if (text.length > 0) {
-                // If text exists, send normally
-                handleSend(false);
-            } else {
-                // If empty, Start Live Call (Mic)
-                if (!recognition) { alert("Your browser doesn't support Voice Input. Use Chrome."); return; }
+            if (!text && !currentAttachment.data) return;
+
+            // 🎨 COMMAND INTERCEPT: /imagine
+            if (text.startsWith("/imagine ")) {
+                isGenerating = true;
+                const prompt = text.replace("/imagine ", "");
+                appendMessageUI('user', text);
+                inputElem.value = '';
+                const uniqueId = 'stream_' + Date.now();
+                document.getElementById('chatBox').insertAdjacentHTML('beforeend', `<div class="w-full flex my-4 px-2 justify-start"><div class="bg-apexHover border border-blue-500/30 p-5 rounded-2xl"><div id="status_${uniqueId}" class="text-xs text-blue-400 animate-pulse"><i class="ph ph-palette"></i> Synthesizing Image via Puter AI...</div><div id="${uniqueId}"></div></div></div>`);
                 
-                actionIcon.className = "ph ph-waveform animate-pulse text-xl font-bold";
-                actionBtn.classList.add('listening'); // Adds the red pulse
-
-                try { recognition.start(); } catch(e) {}
-
-                recognition.onresult = (event) => {
-                    const transcript = event.results[0][0].transcript;
-                    inputElem.value = transcript;
-                    resetMicBtn();
-                    // AUTO SEND WITH CALL MODE TRUE
-                    handleSend(true); 
-                };
-
-                recognition.onerror = () => resetMicBtn();
-                recognition.onend = () => resetMicBtn();
-            }
-        }
-
-        function resetMicBtn() {
-            actionBtn.classList.remove('listening');
-            if(inputElem.value.trim().length > 0) {
-                actionIcon.className = "ph ph-paper-plane-tilt text-xl font-bold";
-            } else {
-                actionIcon.className = "ph ph-microphone text-xl font-bold";
-            }
-        }
-
-        async function playAudio(streamId, btnElement) {
-            const rawDataElem = document.getElementById('raw_' + streamId);
-            if (!rawDataElem) return;
-            const textToSpeak = decodeURIComponent(rawDataElem.innerText);
-            
-            if (currentGlobalAudio) {
-                currentGlobalAudio.pause(); currentGlobalAudio = null;
-                if (currentActivePlayBtn) {
-                    currentActivePlayBtn.innerHTML = currentActivePlayBtnHtml; currentActivePlayBtn.disabled = false;
-                    currentActivePlayBtn.classList.replace('text-green-400', 'text-blue-400'); currentActivePlayBtn.classList.replace('border-green-500/50', 'border-blue-500/30');
+                try {
+                    const imgElement = await puter.ai.txt2img(prompt);
+                    document.getElementById(`status_${uniqueId}`).classList.add('hidden');
+                    document.getElementById(uniqueId).appendChild(imgElement);
+                    imgElement.className = "rounded-lg shadow-lg border border-white/10 max-w-full";
+                    chats.find(c => c.id === currentChatId).messages.push({ role: 'user', content: text }, { role: 'assistant', content: `[Image Generated: ${prompt}]` });
+                    await saveCloudData();
+                } catch (e) {
+                    document.getElementById(`status_${uniqueId}`).innerText = "❌ Image Generation Failed!";
                 }
+                isGenerating = false;
+                clearAttachment();
+                return;
             }
-            currentActivePlayBtnHtml = btnElement.innerHTML; currentActivePlayBtn = btnElement;
-            btnElement.innerHTML = `<i class="ph ph-spinner animate-spin text-sm"></i> Syncing...`; btnElement.disabled = true;
 
-            try {
-                const res = await fetch(`${COLAB_URL}/v1/audio`, { method: 'POST', headers: secureHeaders(), body: JSON.stringify({ text: textToSpeak, voice: APEX_VOICE, speed: APEX_SPEED }) });
-                if (!res.ok) throw new Error("Stream failed");
-                const blob = await res.blob();
-                currentGlobalAudio = new Audio(URL.createObjectURL(blob));
-                
-                currentGlobalAudio.onplay = () => {
-                    btnElement.innerHTML = `<i class="ph ph-waveform animate-pulse text-sm"></i> Live Stream`;
-                    btnElement.classList.replace('text-blue-400', 'text-green-400'); btnElement.classList.replace('border-blue-500/30', 'border-green-500/50');
-                };
-                currentGlobalAudio.onended = () => {
-                    btnElement.innerHTML = currentActivePlayBtnHtml; btnElement.disabled = false;
-                    btnElement.classList.replace('text-green-400', 'text-blue-400'); btnElement.classList.replace('border-green-500/50', 'border-blue-500/30');
-                    currentGlobalAudio = null;
-                };
-                await currentGlobalAudio.play();
-            } catch (err) {
-                btnElement.innerHTML = `<i class="ph ph-warning-circle text-sm text-red-400"></i> Error`;
-                setTimeout(() => { btnElement.innerHTML = currentActivePlayBtnHtml; btnElement.disabled = false; }, 2000);
-            }
-        }
+            if (!colabUrl) { alert("Please enter the Colab URL!"); return; }
 
-        async function setManualUrl() {
-            const mUrl = document.getElementById('manualUrl').value.trim();
-            if (mUrl.startsWith("http")) {
-                COLAB_URL = mUrl.replace(/\/$/, ""); document.getElementById('serverStatus').innerText = 'Cluster Active (Manual)';
-                document.getElementById('manualUrlBox').classList.add('hidden');
-                const errBox = document.getElementById('authError'); errBox.classList.remove('hidden');
-                if (AUTH_TOKEN) {
-                    errBox.innerText = "URL Accepted. Verifying Cloud Access..."; errBox.className = "text-xs text-blue-500 font-bold bg-blue-500/10 py-2.5 rounded-lg border border-blue-500/20";
-                    try { await fetchCloudChats(); } catch(e) { errBox.innerText = "Token Expired. Login Again."; errBox.className = "text-xs text-red-500 font-bold bg-red-500/10 py-2.5 rounded-lg border border-red-500/20"; }
-                } else {
-                    errBox.innerText = "System Overridden. Proceed to Auth."; errBox.className = "text-xs text-green-500 font-bold bg-green-500/10 py-2.5 rounded-lg border border-green-500/20";
-                }
-            }
-        }
-
-        function toggleDeepThink() {
-            isDeepThinkEnabled = !isDeepThinkEnabled; const btn = document.getElementById('deepThinkBtn'); const text = document.getElementById('deepThinkText');
-            if (isDeepThinkEnabled) { btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/50 text-blue-400 bg-blue-900/20 transition-all shadow-[0_0_15px_rgba(37,99,235,0.2)] mb-2"; text.innerText = "Google Core: ON"; document.getElementById('deepThinkIndicator').classList.remove('hidden'); } 
-            else { btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 text-gray-400 bg-black/30 hover:bg-black/50 transition-all mb-2"; text.innerText = "Google Core: OFF"; document.getElementById('deepThinkIndicator').classList.add('hidden'); }
-        }
-
-        const secureHeaders = (isAuth = true) => { const h = { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' }; if (isAuth && AUTH_TOKEN) h['Authorization'] = `Bearer ${AUTH_TOKEN}`; return h; };
-
-        const renderWelcomeScreen = () => { return `<div class="h-full flex flex-col items-center justify-center text-center px-4" id="welcomeScreen"><div class="w-28 h-28 bg-blue-900/20 border border-blue-500/30 rounded-full flex items-center justify-center mb-8 apex-glow relative shadow-[0_0_40px_rgba(37,99,235,0.15)]"><div class="absolute inset-0 rounded-full border border-blue-400/20 animate-ping"></div><i class="ph ph-cpu text-6xl text-blue-400"></i></div><h2 class="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-br from-white via-blue-200 to-blue-600 bg-clip-text text-transparent uppercase tracking-tight">Terminal Access Granted</h2><div class="flex gap-3 mb-6"><span class="px-4 py-1.5 text-[10px] font-bold text-blue-400 bg-blue-900/30 border border-blue-500/20 rounded-md uppercase tracking-widest shadow-sm">God-Mode Protocol</span><span class="px-4 py-1.5 text-[10px] font-bold text-red-400 bg-red-900/30 border border-red-500/20 rounded-md uppercase tracking-widest shadow-sm">Live Call Active 📞</span></div></div>`; };
-
-        async function initSystem() {
-            document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); 
-            try {
-                const linkRes = await fetch(`${GIST_URL}?t=${new Date().getTime()}`); if (!linkRes.ok) throw new Error("Blocked");
-                COLAB_URL = (await linkRes.text()).trim().replace(/\/$/, ""); document.getElementById('serverStatus').innerText = 'Cluster Active';
-                if (!AUTH_TOKEN) document.getElementById('authModal').classList.remove('hidden'); else await fetchCloudChats();
-            } catch (err) { document.getElementById('serverStatus').innerText = 'Cluster Offline'; document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-red-500'; document.getElementById('authModal').classList.remove('hidden'); }
-        }
-
-        async function fetchCloudChats() {
-            try {
-                const res = await fetch(`${COLAB_URL}/v1/chats`, { headers: secureHeaders() });
-                if (res.ok) { const data = await res.json(); chats = data.chats || []; verifyToken(); if (chats.length > 0) loadChat(chats[0].id); else createNewChat(); } else logout();
-            } catch (e) { document.getElementById('authModal').classList.remove('hidden'); }
-        }
-
-        async function saveCloudChat(chat) { try { await fetch(`${COLAB_URL}/v1/chats/save`, { method: 'POST', headers: secureHeaders(), body: JSON.stringify(chat) }); } catch (e) {} }
-
-        function switchTab(mode) {
-            currentMode = mode; document.getElementById('tabLogin').className = mode === 'login' ? "flex-1 py-3 rounded-lg bg-blue-600 text-white shadow-md transition-all" : "flex-1 py-3 rounded-lg text-gray-500 hover:text-white transition-all"; document.getElementById('tabSignup').className = mode === 'signup' ? "flex-1 py-3 rounded-lg bg-blue-600 text-white shadow-md transition-all" : "flex-1 py-3 rounded-lg text-gray-500 hover:text-white transition-all"; document.getElementById('signupKeyBox').classList.toggle('hidden', mode === 'login'); document.getElementById('authSubmitBtn').innerText = mode === 'login' ? "Establish Connection" : "Verify Clearance";
-        }
-
-        async function handleAuthSubmit() {
-            const username = document.getElementById('authUsername').value.trim(); const password = document.getElementById('authPassword').value.trim(); const key = document.getElementById('authKey').value.trim(); const errBox = document.getElementById('authError');
-            if (!username || !password) return;
-            try {
-                let endpoint = currentMode === 'login' ? '/v1/auth/login' : '/v1/auth/signup'; let payload = currentMode === 'login' ? { username, password } : { username, password, activation_key: key };
-                const res = await fetch(`${COLAB_URL}${endpoint}`, { method: 'POST', headers: secureHeaders(false), body: JSON.stringify(payload) });
-                if (res.ok) { AUTH_TOKEN = (await res.json()).token; localStorage.setItem('apex_token', AUTH_TOKEN); document.getElementById('authModal').classList.add('hidden'); errBox.classList.add('hidden'); await fetchCloudChats(); } 
-                else { const errData = await res.json(); errBox.innerText = `Access Denied: ${res.status === 404 && currentMode === 'login' ? "Database Wiped on Colab restart! Use 'Request Access'." : errData.detail}`; errBox.classList.remove('hidden'); }
-            } catch (err) { errBox.innerText = "Connection Failed."; errBox.classList.remove('hidden'); }
-        }
-
-        function verifyToken() { document.getElementById('authModal').classList.add('hidden'); }
-        function logout() { localStorage.removeItem('apex_token'); AUTH_TOKEN = ""; document.getElementById('authModal').classList.remove('hidden'); }
-        
-        async function createNewChat() { if (isGenerating) return; currentChatId = 'chat_' + Date.now(); const newChat = { id: currentChatId, title: "Classified Intel", messages: [] }; chats.unshift(newChat); renderHistory(); document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); await saveCloudChat(newChat); }
-        function loadChat(id) { if (isGenerating) return; currentChatId = id; document.getElementById('chatBox').innerHTML = ''; const chat = chats.find(c => c.id === id); if (chat && chat.messages.length > 0) { chat.messages.forEach(msg => appendMessageUI(msg.role, msg.content, true)); } else { document.getElementById('chatBox').innerHTML = renderWelcomeScreen(); } renderHistory(); }
-        function renderHistory() { const list = document.getElementById('historyList'); list.innerHTML = ''; chats.forEach(chat => { const isActive = chat.id === currentChatId; list.innerHTML += `<button onclick="loadChat('${chat.id}')" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl ${isActive ? 'bg-blue-600/10 border border-blue-500/30 text-blue-100 font-semibold shadow-inner' : 'text-gray-400 hover:bg-apexHover border border-transparent'} transition-all text-sm truncate"><i class="ph ph-terminal-window text-base text-blue-500"></i><span class="truncate tracking-wide">${chat.title}</span></button>`; }); }
-
-        function appendMessageUI(role, text, isHistoryLoad = false) {
-            const chatBox = document.getElementById('chatBox'); if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
-            const isUser = role === 'user'; const msgRow = document.createElement('div'); msgRow.className = `w-full flex my-4 px-2 md:px-4 ${isUser ? 'justify-end' : 'justify-start'}`; const uniqueId = 'msg_' + Date.now() + Math.random().toString(36).substring(7);
-
-            if (isUser) msgRow.innerHTML = `<div class="max-w-[85%] md:max-w-[70%] bg-blue-600 text-white px-6 py-4 rounded-2xl rounded-tr-sm text-sm md:text-base leading-relaxed break-words font-medium shadow-[0_5px_20px_-5px_rgba(37,99,235,0.4)] tracking-wide">${text}</div>`;
-            else msgRow.innerHTML = `<div class="max-w-[95%] md:max-w-[85%] flex gap-5 items-start bg-apexHover border border-white/5 px-6 md:px-7 py-6 rounded-2xl rounded-tl-sm text-sm md:text-base text-gray-200 shadow-xl"><div class="w-10 h-10 rounded-xl bg-blue-900/30 border border-blue-500/40 flex-shrink-0 flex items-center justify-center text-blue-400 mt-0.5 shadow-[0_0_10px_rgba(37,99,235,0.2)]"><i class="ph ph-cpu text-2xl"></i></div><div class="w-full"><div class="hidden" id="raw_${uniqueId}">${encodeURIComponent(text)}</div><div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose">${marked.parse(text)}</div>${isHistoryLoad ? `<div class="mt-4 flex items-center justify-end border-t border-white/5 pt-3"><button onclick="playAudio('${uniqueId}', this)" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1.5 bg-blue-900/20 px-3 py-2 rounded-lg border border-blue-500/30 uppercase font-bold tracking-widest transition-all shadow-sm"><i class="ph ph-speaker-high text-base"></i> Play Voice</button></div>` : ''}</div></div>`;
-            chatBox.appendChild(msgRow); document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el)); chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        // 🔥 MODIFIED: Accepts isCallMode flag
-        async function handleSend(isCallMode = false) {
-            if (isGenerating) return; 
-            const text = inputElem.value.trim();
-            if (!text) return; if (!AUTH_TOKEN) { document.getElementById('authModal').classList.remove('hidden'); return; }
-
-            isGenerating = true; 
-            if (!currentChatId) await createNewChat();
-            appendMessageUI('user', text); inputElem.value = ''; inputElem.style.height = 'auto'; actionIcon.className = "ph ph-microphone text-xl font-bold";
+            isGenerating = true;
+            appendMessageUI('user', text, currentAttachment);
+            inputElem.value = ''; inputElem.style.height = 'auto';
 
             const chat = chats.find(c => c.id === currentChatId);
-            if (chat.messages.length === 0) chat.title = text.substring(0, 25) + "...";
-            chat.messages.push({ role: 'user', content: text }); await saveCloudChat(chat); renderHistory();
+            if (chat.messages.length === 0) chat.title = text.substring(0, 20) || currentAttachment.name;
+            
+            // Format Payload
+            let finalPrompt = text;
+            if (currentAttachment.type === 'pdf') {
+                finalPrompt = `${text}\n\n${currentAttachment.data}`; 
+            } else if (text.startsWith("/scan ")) {
+                finalPrompt = `[SYSTEM_CMD: SCAN_URL] ${text.replace("/scan ", "")}`;
+            }
 
-            const chatBox = document.getElementById('chatBox'); if (document.getElementById('welcomeScreen')) document.getElementById('welcomeScreen').remove();
-            const uniqueStreamId = 'stream_' + Date.now(); const aiRow = document.createElement('div'); aiRow.className = `w-full flex my-4 px-2 md:px-4 justify-start`;
-            const iconHTML = isDeepThinkEnabled ? '<i class="ph ph-brain text-2xl text-purple-400 animate-pulse"></i>' : '<i class="ph ph-cpu text-2xl text-blue-400"></i>';
-            const bgClass = isDeepThinkEnabled ? 'bg-purple-900/30 border-purple-500/40' : 'bg-blue-900/30 border-blue-500/40';
+            const payloadMessage = { role: 'user', content: finalPrompt };
+            if (currentAttachment.type === 'image') payloadMessage.image_base64 = currentAttachment.data;
+            
+            chat.messages.push({ role: 'user', content: text, attachment: currentAttachment.type ? currentAttachment : null });
+            
+            // Temporary attachment reset for UI
+            const attachmentToSend = currentAttachment;
+            clearAttachment();
 
-            aiRow.innerHTML = `<div class="max-w-[95%] md:max-w-[85%] flex gap-5 items-start bg-apexHover border border-blue-500/20 px-6 md:px-7 py-6 rounded-2xl rounded-tl-sm text-sm md:text-base text-gray-200 w-full relative overflow-hidden shadow-[0_0_30px_-5px_rgba(37,99,235,0.15)]"><div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 shadow-[0_0_15px_#3b82f6]"></div><div class="w-10 h-10 rounded-xl ${bgClass} border flex-shrink-0 flex items-center justify-center mt-0.5 apex-glow">${iconHTML}</div><div class="w-full"><div id="status_${uniqueStreamId}" class="text-xs font-mono font-bold text-blue-400 mb-3 animate-pulse hidden tracking-wider"></div><div class="hidden" id="raw_${uniqueStreamId}"></div><div class="prose prose-invert max-w-none w-full overflow-x-auto leading-loose" id="${uniqueStreamId}"><span class="inline-block w-2.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle shadow-[0_0_8px_#60a5fa]"></span></div><div id="audiobar_${uniqueStreamId}" class="hidden mt-4 flex items-center justify-end border-t border-white/5 pt-3"><button id="playBtn_${uniqueStreamId}" onclick="playAudio('${uniqueStreamId}', this)" class="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1.5 bg-blue-900/20 px-3 py-2 rounded-lg border border-blue-500/30 uppercase font-bold tracking-widest transition-all shadow-sm"><i class="ph ph-speaker-high text-base"></i> Play Voice</button></div></div></div>`;
-            chatBox.appendChild(aiRow); chatBox.scrollTop = chatBox.scrollHeight;
-
-            const contentElem = document.getElementById(uniqueStreamId); const statusElem = document.getElementById(`status_${uniqueStreamId}`); const rawElem = document.getElementById(`raw_${uniqueStreamId}`); let fullReply = "";
+            const uniqueId = 'stream_' + Date.now();
+            document.getElementById('chatBox').insertAdjacentHTML('beforeend', `<div class="w-full flex my-4 px-2 justify-start"><div class="w-full max-w-[95%] bg-apexHover border border-blue-500/30 px-5 py-4 rounded-2xl rounded-tl-sm text-sm text-gray-200 prose prose-invert overflow-x-auto"><div id="status_${uniqueId}" class="text-xs font-bold text-blue-400 mb-2 animate-pulse">[+] Contacting Omni-Core...</div><div id="${uniqueId}"></div></div></div>`);
+            
+            const contentElem = document.getElementById(uniqueId);
+            const statusElem = document.getElementById(`status_${uniqueId}`);
+            let fullReply = "";
 
             try {
-                // Sent Call Mode parameter
-                const response = await fetch(`${COLAB_URL}/v1/chat`, { method: 'POST', headers: secureHeaders(), body: JSON.stringify({ id: chat.id, title: chat.title, messages: chat.messages, client: "web", deep_think: isDeepThinkEnabled, call_mode: isCallMode }) });
-                if (!response.ok) throw new Error("Stream failed");
-                const reader = response.body.getReader(); const decoder = new TextDecoder();
+                // Send chat history but replace the last message with our formatted payload
+                const messagesToSend = [...chat.messages];
+                messagesToSend[messagesToSend.length - 1] = payloadMessage;
+
+                const response = await fetch(`${colabUrl}/v1/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' },
+                    body: JSON.stringify({ messages: messagesToSend, use_omni_vault: isRAGEnabled })
+                });
+
+                if (!response.ok) throw new Error("Offline");
+                
+                document.getElementById('statusDot').className = 'w-2 h-2 rounded-full bg-green-500'; document.getElementById('colabStatus').innerText = 'Colab Online';
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
                 while (true) {
-                    const { value, done } = await reader.read(); if (done) break;
+                    const { value, done } = await reader.read();
+                    if (done) break;
                     const lines = decoder.decode(value, { stream: true }).split("\n");
                     for (let line of lines) {
                         if (line.startsWith("data: ")) {
-                            const dataStr = line.replace("data: ", "").trim(); if (dataStr === "[DONE]") break;
+                            const dataStr = line.replace("data: ", "").trim();
+                            if (dataStr === "[DONE]") break;
                             try {
                                 const parsed = JSON.parse(dataStr);
-                                if (parsed.status) { if (parsed.status === "DONE") statusElem.classList.add('hidden'); else { statusElem.classList.remove('hidden'); statusElem.innerText = parsed.status; chatBox.scrollTop = chatBox.scrollHeight; } }
-                                if (parsed.content) { fullReply += parsed.content; rawElem.innerText = encodeURIComponent(fullReply); contentElem.innerHTML = marked.parse(fullReply) + '<span class="inline-block w-2.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle shadow-[0_0_8px_#60a5fa]"></span>'; chatBox.scrollTop = chatBox.scrollHeight; }
+                                if (parsed.status) { if (parsed.status === "DONE") statusElem.classList.add('hidden'); else statusElem.innerText = parsed.status; }
+                                if (parsed.content) {
+                                    fullReply += parsed.content;
+                                    // Parse DEEP THINKING in real-time
+                                    let displayReply = fullReply.replace(/<think>/g, '<details open class="think-block mb-4 bg-black/40 border border-white/5 rounded-xl p-3"><summary class="cursor-pointer text-xs font-bold text-blue-400 flex items-center gap-2 select-none"><i class="ph ph-brain text-lg animate-pulse"></i> ApexNet Deep Thinking...</summary><div class="mt-3 text-xs text-gray-400 border-l-2 border-blue-500/30 pl-3">');
+                                    displayReply = displayReply.replace(/<\/think>/g, '</div></details>');
+                                    contentElem.innerHTML = marked.parse(displayReply);
+                                    document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+                                }
                             } catch (e) {}
                         }
                     }
                 }
-                contentElem.innerHTML = marked.parse(fullReply); document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-                chat.messages.push({ role: 'assistant', content: fullReply }); await saveCloudChat(chat);
-                document.getElementById(`audiobar_${uniqueStreamId}`).classList.remove('hidden');
+                
+                document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+                chat.messages.push({ role: 'assistant', content: fullReply });
+                await saveCloudData();
 
-                // 🔥 THE MAGIC: If call mode is active, automatically start playing the voice!
-                if (isCallMode) {
-                    setTimeout(() => { playAudio(uniqueStreamId, document.getElementById(`playBtn_${uniqueStreamId}`)); }, 500);
-                }
-
-            } catch (err) { contentElem.innerHTML = "<span class='text-red-400 font-bold'>🚨 Connection Severed.</span>"; } 
-            finally { isGenerating = false; aiRow.firstElementChild.classList.remove('border-blue-500/20'); aiRow.firstElementChild.classList.add('border-white/5'); aiRow.firstElementChild.querySelector('.absolute').remove(); statusElem.classList.add('hidden'); }
+            } catch (err) {
+                statusElem.classList.add('hidden');
+                contentElem.innerHTML = `<span class='text-red-400 font-bold'>🚨 Connection Failed. Check Colab link.</span>`;
+            } finally {
+                isGenerating = false;
+            }
         }
 
-        inputElem.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!isGenerating && inputElem.value.trim().length > 0) handleSend(false); } });
-        if (chats.length === 0) initSystem(); else renderHistory(); initSystem();
+        checkPuterStatus();
     </script>
 </body>
 </html>
