@@ -28,7 +28,7 @@ Built upon the rock-solid **AstideLabs SM8250 Linux 4.19 LTS** foundation, EXTRE
 
 | Attribute | Specification |
 | :--- | :--- |
-| **Project Status** | 🚀 **Active Beta (Rock-Solid & Daily Driver Stable)** |
+| **Project Status** | 🟢 **Official Stable · Production Ready (Daily Driver)** |
 | **Linux Kernel Base** | AstideLabs SM8250 4.19 (`4.19.325-cip135-st19`) |
 | **Built-in Boot Governor** | `extreme+` (Active from boot, zero laggy service scripts) |
 | **Default ZRAM Compressor** | **ZSTD Level 3** (High-efficiency dynamic workspace) |
@@ -174,7 +174,7 @@ You can download the flashable AnyKernel3 ZIP through either of the following tw
 | Method | Source | Best For |
 | :--- | :--- | :--- |
 | **Option 1** | 📦 **[GitHub Releases](https://github.com/PandeyJI-9/Extreme-PLUS-kernel-munch/releases)** | Official tagged releases & milestone builds |
-| **Option 2** | 🚀 **[Telegram Support Group (@Extremeplus_Support)](https://t.me/Extremeplus_Support)** | **Recommended!** Fastest updates, daily beta builds, direct test drops, changelogs, and instant support from PandeyJi |
+| **Option 2** | 🚀 **[Telegram Support Group (@Extremeplus_Support)](https://t.me/Extremeplus_Support)** | **Recommended!** Fastest updates, latest release builds, direct drops, changelogs, and instant support from PandeyJi |
 
 > [!IMPORTANT]
 > Always download the ZIP that matches your installed ROM:
@@ -236,9 +236,11 @@ cat /sys/class/kgsl/kgsl-3d0/gpu_available_frequencies
 
 ## 🤝 Community & Support
 
-* 💬 **Official Telegram Group:** [@Extremeplus_Support](https://t.me/Extremeplus_Support)
+* 💬 **Official Telegram Community:** [@Extremeplus_Support](https://t.me/Extremeplus_Support) *(Join for chat, instant help, ROM feedback & discussions)*
 * 👨‍💻 **Lead Developer & Maintainer:** **Ayush Pandey JI** ([@pandey_ji_8](https://t.me/pandey_ji_8))
-* 🐞 **Bug Reports:** [GitHub Issues](https://github.com/PandeyJI-9/Extreme-PLUS-kernel-munch/issues)
+* 🐞 **Bug Reports & Issues:**
+  * 🚀 **Telegram Group (Fastest & Easiest):** Seedha [@Extremeplus_Support](https://t.me/Extremeplus_Support) me issue ya kernel log drop karo — koi GitHub account banane ki jhanjhat nahi!
+  * 🌐 **GitHub Issues:** [Create an Issue](https://github.com/PandeyJI-9/Extreme-PLUS-kernel-munch/issues) agar structured developer-level tracking chahiye.
 
 ---
 
