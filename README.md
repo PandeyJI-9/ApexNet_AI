@@ -10,6 +10,7 @@
 [![SoC](https://img.shields.io/badge/Snapdragon_870-SM8250--AC%20(Kona%20v2.1)-red?style=for-the-badge&logo=qualcomm&logoColor=white)](https://www.qualcomm.com/products/application/smartphones/snapdragon-8-series-mobile-platforms/snapdragon-870-5g-mobile-platform)
 [![Target Matrix](https://img.shields.io/badge/Targets-HyperOS%201.0--4.0%20%7C%20AOSP%2013--17-success?style=for-the-badge&logo=android&logoColor=white)](https://github.com/PandeyJI-9/Extreme-PLUS-kernel-munch)
 [![Root Support](https://img.shields.io/badge/Root-KowSU%20%2F%20ReSukiSU%20%2B%20SuSFS%20v2.3.0-9c27b0?style=for-the-badge&logo=android&logoColor=white)](https://github.com/ReSukiSU/ReSukiSU)
+[![Companion App](https://img.shields.io/badge/Companion_App-EKM_v2.1.0-e91e63?style=for-the-badge&logo=android&logoColor=white)](https://github.com/PandeyJI-9/extreme-kernel-manager)
 [![Community](https://img.shields.io/badge/Community-Telegram_Support-29b6f6?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Extremeplus_Support)
 
 <br>
@@ -31,6 +32,7 @@ Built upon the rock-solid **AstideLabs SM8250 Linux 4.19 LTS** foundation, EXTRE
 | **Project Status** | 🟢 **Official Stable · Production Ready (Daily Driver)** |
 | **Linux Kernel Base** | AstideLabs SM8250 4.19 (`4.19.325-cip135-st19`) |
 | **Built-in Boot Governor** | `extreme+` (Active from boot, zero laggy service scripts) |
+| **Official Companion App** | **[Extreme Kernel Manager (EKM)](https://github.com/PandeyJI-9/extreme-kernel-manager)** (BMW M-Power UI & Live Control) |
 | **Default ZRAM Compressor** | **ZSTD Level 3** (High-efficiency dynamic workspace) |
 | **GPU Subsystem** | FakeDreamer 7-Stage OPP Table + Deep Undervolting (`msm-adreno-tz`) |
 | **Peak Prime CPU Clock** | **3.19 GHz Monster Peak** (`3187200` kHz) |
@@ -100,6 +102,9 @@ echo balanced > /sys/kernel/profile
 echo battery > /sys/kernel/profile
 ```
 
+> [!TIP]
+> **Prefer a graphical interface?** Use our official **[Extreme Kernel Manager (EKM)](https://github.com/PandeyJI-9/extreme-kernel-manager)** Android app for 1-click profile switching, live BMW M-Power frequency monitoring, and POCO F4 AMOLED DC Dimming!
+
 ---
 
 ### 2. 🎮 Adreno 650 GPU: FakeDreamer 7-Stage OPP & Deep Undervolt
@@ -167,8 +172,9 @@ Our GPU architecture integrates the renowned **FakeDreamer Adreno 650 OPP table*
 
 ---
 
-## 📥 Where to Get the Kernel ZIP
+## 📥 Downloads & Official Companion App
 
+### 1. 🚀 EXTREME++ Kernel (AnyKernel3 ZIPs)
 You can download the flashable AnyKernel3 ZIP through either of the following two channels:
 
 | Method | Source | Best For |
@@ -182,6 +188,29 @@ You can download the flashable AnyKernel3 ZIP through either of the following tw
 > * **AOSP Users:** Flash `EXTREME++_AOSP_*.zip`
 > 
 > *Never flash the Raw Images ZIP (`.img`/`dtb`). Raw images are developer artifacts, not flashable AnyKernel packages.*
+
+---
+
+### 2. 📱 Extreme Kernel Manager (EKM Companion App)
+The official open-source companion app designed exclusively for EXTREME++ on POCO F4 (`munch`), built with pure Kotlin, BMW M-Power aesthetics, and zero battery overhead.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       EXTREME KERNEL MANAGER (EKM)                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  ⚡ Live Kernel Handshake      │  Direct sync with /sys/kernel/extreme_profile│
+│  🏎️ BMW M-Power Dashboard     │  Real-time 3.19 GHz, GPU & Schedtune metrics│
+│  🎛️ 1-Click Profile Engine    │  Instant Gaming / Balanced / Battery switch │
+│  🌙 Munch AMOLED DC Dimming   │  Hardware flicker reduction + QS Tile       │
+│  🔒 Pure Root Security        │  Safe execution on KernelSU, APatch & Magisk│
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+| Resource | Link | Notes |
+| :--- | :--- | :--- |
+| **Official Repository** | 🐙 **[PandeyJI-9/extreme-kernel-manager](https://github.com/PandeyJI-9/extreme-kernel-manager)** | Full open-source Kotlin project & docs |
+| **Latest Release (Always Updated)** | ⚡ **[Download Latest EKM APK](https://github.com/PandeyJI-9/extreme-kernel-manager/releases/latest)** | Direct access to the newest stable APK release |
+| **Latest Stable Tag (v2.1.0)** | 🏷️ **[EKM v2.1.0 Release Notes](https://github.com/PandeyJI-9/extreme-kernel-manager/releases/tag/v2.1.0)** | BMW M-Power UI, Munch AMOLED DC Dimming, R8 optimized |
 
 ---
 
